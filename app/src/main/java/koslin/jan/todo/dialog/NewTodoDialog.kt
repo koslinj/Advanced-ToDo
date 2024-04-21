@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class NewTodoDialog(private val onTodoAdded: () -> Unit) : DialogFragment(R.layout.new_todo_dialog)
+class NewTodoDialog(private val onTodoAdded: (Todo) -> Unit) : DialogFragment(R.layout.new_todo_dialog)
 {
     private lateinit var saveButton: Button
     private lateinit var title: TextInputEditText
@@ -40,17 +40,11 @@ class NewTodoDialog(private val onTodoAdded: () -> Unit) : DialogFragment(R.layo
         val dueDate = System.currentTimeMillis() // You may replace this with a DatePicker or similar
 
         val todo = Todo(title = titleStr, description = descStr, dueDate = dueDate)
-
-        // Insert into Room database
-        GlobalScope.launch(Dispatchers.IO) {
-            App.database.todoDao().insert(todo)
-        }
+        onTodoAdded(todo)
 
         title.setText("")
         desc.setText("")
         dismiss()
-
-        onTodoAdded()
     }
 
 }
