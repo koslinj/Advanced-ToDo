@@ -8,15 +8,18 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import koslin.jan.todo.App
+import koslin.jan.todo.DatePickerFragment
 import koslin.jan.todo.R
 import koslin.jan.todo.entity.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class NewTodoDialog(private val onTodoAdded: (Todo) -> Unit) : DialogFragment(R.layout.new_todo_dialog)
+class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 {
+    private lateinit var onTodoAdded: (Todo) -> Unit
     private lateinit var saveButton: Button
+    private lateinit var dateButton: Button
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
 
@@ -25,11 +28,17 @@ class NewTodoDialog(private val onTodoAdded: (Todo) -> Unit) : DialogFragment(R.
         //dialog?.window?.setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         saveButton = view.findViewById(R.id.saveButton)
+        dateButton = view.findViewById(R.id.dateButton)
         title = view.findViewById(R.id.title)
         desc = view.findViewById(R.id.desc)
 
         saveButton.setOnClickListener {
             saveAction()
+        }
+
+        dateButton.setOnClickListener {
+            val newFragment = DatePickerFragment()
+            newFragment.show(parentFragmentManager, "datePickerTag")
         }
     }
 
@@ -45,6 +54,10 @@ class NewTodoDialog(private val onTodoAdded: (Todo) -> Unit) : DialogFragment(R.
         title.setText("")
         desc.setText("")
         dismiss()
+    }
+
+    fun setOnAdd(function: (Todo) -> Unit) {
+        onTodoAdded = function
     }
 
 }

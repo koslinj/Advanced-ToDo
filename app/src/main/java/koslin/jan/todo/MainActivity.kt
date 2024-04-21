@@ -36,9 +36,8 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         newTodoButton.setOnClickListener {
-            val newTodoDialog = NewTodoDialog {
-                todoViewModel.addTodo(it)
-            }
+            val newTodoDialog = NewTodoDialog()
+            newTodoDialog.setOnAdd { todoViewModel.addTodo(it) }
             newTodoDialog.show(supportFragmentManager, "newTodoTag")
         }
 
