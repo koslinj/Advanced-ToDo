@@ -1,6 +1,7 @@
 package koslin.jan.todo.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import koslin.jan.todo.entity.Todo
@@ -12,4 +13,7 @@ interface TodoDao {
 
     @Query("SELECT * FROM todos")
     suspend fun getAllTodos(): List<Todo>
+
+    @Delete
+    suspend fun delete(todo: Todo)
 }

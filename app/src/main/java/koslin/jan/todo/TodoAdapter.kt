@@ -4,10 +4,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import koslin.jan.todo.entity.Todo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TodoAdapter(private val todoList: List<Todo>) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
+class TodoAdapter(private var todoList: List<Todo>, private val onTodoDeleted: (Todo) -> Unit) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val todoTextView: TextView = itemView.findViewById(R.id.todoTextView)
@@ -24,5 +29,14 @@ class TodoAdapter(private val todoList: List<Todo>) : RecyclerView.Adapter<TodoA
 
     override fun getItemCount(): Int {
         return todoList.size
+    }
+
+    fun updateData(newData: List<Todo>) {
+        todoList = newData
+        notifyDataSetChanged()
+    }
+
+    fun deleteItem(position: Int) {
+        onTodoDeleted(todoList[position])
     }
 }
