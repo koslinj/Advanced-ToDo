@@ -4,10 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import koslin.jan.todo.dialog.NewTodoDialog
-import koslin.jan.todo.entity.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -27,16 +25,18 @@ class MainActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         newTodoButton.setOnClickListener {
-//            MaterialAlertDialogBuilder(this)
-//                .setView(R.layout.new_todo_dialog)
-//                .show()
-            NewTodoDialog().show(supportFragmentManager, "newTodoTag")
+            val newTodoDialog = NewTodoDialog {
+                refreshAllTodos()
+            }
+
+            newTodoDialog.show(supportFragmentManager, "newTodoTag")
         }
 
-        GlobalScope.launch(Dispatchers.IO) {
-//            val todo = Todo(0, "todo 2", "Description 2", System.currentTimeMillis())
-//            App.database.todoDao().insert(todo);
+        refreshAllTodos()
+    }
 
+    private fun refreshAllTodos() {
+        GlobalScope.launch(Dispatchers.IO) {
             val todoList = App.database.todoDao().getAllTodos()
             withContext(Dispatchers.Main) {
                 todoAdapter = TodoAdapter(todoList)

@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
+class NewTodoDialog(private val onTodoAdded: () -> Unit) : DialogFragment(R.layout.new_todo_dialog)
 {
     private lateinit var saveButton: Button
     private lateinit var title: TextInputEditText
@@ -49,6 +49,8 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         title.setText("")
         desc.setText("")
         dismiss()
+
+        onTodoAdded()
     }
 
 }
