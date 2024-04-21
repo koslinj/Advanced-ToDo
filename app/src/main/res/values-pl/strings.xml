@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ToDo</string>
+    <string name="new_todo">Nowe ToDo</string>
+    <string name="title">Tytuł</string>
+    <string name="description">Opis</string>
+    <string name="save">Zapisz</string>
+</resources>
