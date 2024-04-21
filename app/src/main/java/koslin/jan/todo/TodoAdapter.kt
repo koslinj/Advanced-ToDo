@@ -5,8 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import koslin.jan.todo.entity.Todo
 
-class TodoAdapter(private val todoList: List<String>) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
+class TodoAdapter(private val todoList: List<Todo>) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val todoTextView: TextView = itemView.findViewById(R.id.todoTextView)
@@ -18,7 +19,7 @@ class TodoAdapter(private val todoList: List<String>) : RecyclerView.Adapter<Tod
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.todoTextView.text = todoList[position]
+        holder.todoTextView.text = todoList[position].title
     }
 
     override fun getItemCount(): Int {
