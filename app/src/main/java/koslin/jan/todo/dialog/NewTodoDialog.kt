@@ -15,6 +15,7 @@ import koslin.jan.todo.DatePickerFragment
 import koslin.jan.todo.R
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.viewmodel.DateViewModel
+import koslin.jan.todo.viewmodel.TodoViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,13 +25,13 @@ import java.util.Locale
 
 class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 {
-    private lateinit var onTodoAdded: (Todo) -> Unit
     private lateinit var saveButton: Button
     private lateinit var dateButton: Button
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
 
     private val dateViewModel: DateViewModel by activityViewModels()
+    private val todoViewModel: TodoViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,15 +64,11 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         val dueDate = dateViewModel.selectedDate.value!!
 
         val todo = Todo(title = titleStr, description = descStr, dueDate = dueDate)
-        onTodoAdded(todo)
+        todoViewModel.addTodo(todo)
 
         title.setText("")
         desc.setText("")
         dismiss()
-    }
-
-    fun setOnAdd(function: (Todo) -> Unit) {
-        onTodoAdded = function
     }
 
 }

@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
         newTodoButton.setOnClickListener {
             val newTodoDialog = NewTodoDialog()
-            newTodoDialog.setOnAdd { todoViewModel.addTodo(it) }
             newTodoDialog.show(supportFragmentManager, "newTodoTag")
         }
 
