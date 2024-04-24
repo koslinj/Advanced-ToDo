@@ -41,6 +41,8 @@ class DatePickerFragment : DialogFragment() {
                     .setHour(12)
                     .setMinute(10)
                     .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                    .setPositiveButtonText("OK")
+                    .setNegativeButtonText(getString(R.string.cancel).uppercase())
                     .build()
             picker.show(parentFragmentManager, "timePickerTag")
         }
@@ -64,7 +66,7 @@ class DatePickerFragment : DialogFragment() {
             .setPositiveButton("OK") { dialog, which ->
                 dateViewModel.setSelectedDate(selectedDate)
             }
-            .setNegativeButton("Cancel") { dialog, which ->
+            .setNegativeButton(R.string.cancel) { dialog, which ->
 
             }
             .create()

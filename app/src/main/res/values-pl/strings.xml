@@ -5,4 +5,5 @@
     <string name="title">Tytuł</string>
     <string name="description">Opis</string>
     <string name="save">Zapisz</string>
+    <string name="cancel">Anuluj</string>
 </resources>
