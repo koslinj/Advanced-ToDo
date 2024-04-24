@@ -7,10 +7,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.DatePicker
+import android.widget.LinearLayout
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import koslin.jan.todo.viewmodel.DateViewModel
 import java.util.Calendar
 import java.util.Date
@@ -18,6 +23,7 @@ import java.util.Date
 class DatePickerFragment : DialogFragment() {
 
     private lateinit var datePicker: DatePicker
+    private lateinit var timeButton: FloatingActionButton
     private lateinit var root: View
     private val dateViewModel: DateViewModel by activityViewModels()
     private var selectedDate: Long = 0
@@ -26,6 +32,18 @@ class DatePickerFragment : DialogFragment() {
         // Inflate the layout
         root = LayoutInflater.from(requireContext()).inflate(R.layout.date_picker_layout, null, false)
         datePicker = root.findViewById(R.id.datePicker)
+        timeButton = root.findViewById(R.id.timeButton)
+
+        timeButton.setOnClickListener {
+            val picker =
+                MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(12)
+                    .setMinute(10)
+                    .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
+                    .build()
+            picker.show(parentFragmentManager, "timePickerTag")
+        }
 
         // Use the current date as the default date in the picker.
         val c = Calendar.getInstance()
