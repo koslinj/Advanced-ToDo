@@ -1,19 +1,26 @@
 package koslin.jan.todo.dialog
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import koslin.jan.todo.App
 import koslin.jan.todo.DatePickerFragment
 import koslin.jan.todo.R
 import koslin.jan.todo.entity.Todo
+import koslin.jan.todo.viewmodel.DateViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 {
@@ -22,6 +29,8 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private lateinit var dateButton: Button
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
+
+    private val dateViewModel: DateViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,6 +45,11 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
             saveAction()
         }
 
+        dateViewModel.selectedDate.observe(viewLifecycleOwner) { date ->
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            dateButton.text = dateFormat.format(date)
+        }
+
         dateButton.setOnClickListener {
             val newFragment = DatePickerFragment()
             newFragment.show(parentFragmentManager, "datePickerTag")
@@ -46,7 +60,7 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     {
         val titleStr = title.text.toString()
         val descStr = desc.text.toString()
-        val dueDate = System.currentTimeMillis() // You may replace this with a DatePicker or similar
+        val dueDate = dateViewModel.selectedDate.value!!
 
         val todo = Todo(title = titleStr, description = descStr, dueDate = dueDate)
         onTodoAdded(todo)
