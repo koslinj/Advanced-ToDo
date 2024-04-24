@@ -11,11 +11,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TodoAdapter(private var todoList: List<Todo>, private val onTodoDeleted: (Todo) -> Unit) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val todoTextView: TextView = itemView.findViewById(R.id.todoTextView)
+        val todoDateTextView: TextView = itemView.findViewById(R.id.todoDateTextView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,6 +28,9 @@ class TodoAdapter(private var todoList: List<Todo>, private val onTodoDeleted: (
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.todoTextView.text = todoList[position].title
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        holder.todoDateTextView.text = dateFormat.format(todoList[position].dueDate)
     }
 
     override fun getItemCount(): Int {
