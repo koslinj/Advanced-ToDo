@@ -11,17 +11,20 @@
         android:id="@+id/datePicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/timeLinear"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <LinearLayout
+        android:id="@+id/timeLinear"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="@+id/datePicker"
-        app:layout_constraintStart_toStartOf="@+id/datePicker"
-        app:layout_constraintTop_toBottomOf="@id/datePicker">
+        app:layout_constraintBottom_toBottomOf="@+id/datePicker"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/datePicker"
+        app:layout_constraintTop_toTopOf="@+id/datePicker">
 
         <View
             android:layout_width="match_parent"
@@ -31,12 +34,12 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="2dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/clockImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/time_icon"
@@ -45,24 +48,25 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/clockTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:text="CZAS"
                 android:textSize="16sp"
-                android:layout_marginLeft="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@+id/clockImageView"
+                app:layout_constraintStart_toEndOf="@+id/clockImageView"
+                app:layout_constraintTop_toTopOf="@+id/clockImageView" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/timeButton"
+                style="?attr/floatingActionButtonSmallStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/timeButton"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/clockImageView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/edit_icon"
-                style="?attr/floatingActionButtonSmallStyle"/>
+                app:layout_constraintTop_toTopOf="@+id/clockImageView"
+                app:srcCompat="@drawable/edit_icon" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View
