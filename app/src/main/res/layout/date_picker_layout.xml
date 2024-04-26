@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/timePartInDateLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -45,9 +46,10 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/timeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CZAS"
+                android:text="17:54"
                 android:textSize="16sp"
                 android:layout_marginLeft="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -70,6 +72,27 @@
             android:layout_height="2dp"
             android:background="?attr/colorPrimary" />
 
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/timePartInDateLayout"
+        app:layout_constraintStart_toStartOf="@id/timePartInDateLayout"
+        app:layout_constraintTop_toBottomOf="@id/timePartInDateLayout">
+        <Button
+            android:id="@+id/negativeButton"
+            android:layout_weight="1"
+            android:layout_marginRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"/>
+        <Button
+            android:id="@+id/positiveButton"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"/>
     </LinearLayout>
 
 
