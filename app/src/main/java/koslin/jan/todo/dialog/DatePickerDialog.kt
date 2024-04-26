@@ -2,6 +2,7 @@ package koslin.jan.todo.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,22 +30,37 @@ class DatePickerDialog : DialogFragment(R.layout.date_picker_layout) {
     private lateinit var negativeButton: Button
     private lateinit var positiveButton: Button
     private val dateTimeViewModel: DateTimeViewModel by activityViewModels()
+    private var initialDateTime: Long = 0
+    private var confirmed = false
     private var year: Int = 0
     private var month: Int = 0
     private var day: Int = 0
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+
+        if (!confirmed){
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = initialDateTime
+            val resetHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val resetMinute = calendar.get(Calendar.MINUTE)
+            dateTimeViewModel.updateTime(resetHour, resetMinute)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        confirmed = false
         datePicker = view.findViewById(R.id.datePicker)
         timeButton = view.findViewById(R.id.timeButton)
         timeTextView = view.findViewById(R.id.timeTextView)
         negativeButton = view.findViewById(R.id.negativeButton)
         positiveButton = view.findViewById(R.id.positiveButton)
 
-        dateTimeViewModel.selectedDateTime.observe(viewLifecycleOwner) { dateTime ->
-            Log.d("ABC", "powinno ustawic tekst")
+        initialDateTime = dateTimeViewModel.selectedDateTime.value!!
 
+        dateTimeViewModel.selectedDateTime.observe(viewLifecycleOwner) { dateTime ->
             val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             val timeString = timeFormat.format(dateTime)
             timeTextView.text = timeString
@@ -65,6 +81,7 @@ class DatePickerDialog : DialogFragment(R.layout.date_picker_layout) {
 
         positiveButton.setOnClickListener {
             dateTimeViewModel.updateDate(year, month, day)
+            confirmed = true
             dismiss()
         }
 
