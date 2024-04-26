@@ -34,6 +34,7 @@ class TodoTouchHelper(private val context: Context, adapter: TodoAdapter) :
         builder.setNegativeButton(
             "Cancel"
         ) { dialog, which -> adapter.notifyItemChanged(viewHolder.adapterPosition) }
+        builder.setOnCancelListener { dialog -> adapter.notifyItemChanged(viewHolder.adapterPosition) }
         val dialog = builder.create()
         dialog.show()
 
