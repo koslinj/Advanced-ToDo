@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onTodoClicked(todo: Todo) {
         // Replace the current fragment with a new fragment displaying todo details
-        val fragment = TodoDetailsFragment.newInstance(todo.title, todo.description, todo.dueDate, todo.createdAt)
+        val fragment = TodoDetailsFragment.newInstance(todo)
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
                 androidx.appcompat.R.anim.abc_slide_in_bottom,

@@ -1,10 +1,16 @@
 package koslin.jan.todo.fragment
+
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.gson.Gson
 import koslin.jan.todo.R
+import koslin.jan.todo.entity.Todo
+import koslin.jan.todo.viewmodel.TodoViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -14,20 +20,16 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
     private lateinit var dateTextView: TextView
     private lateinit var createdAtTextView: TextView
     private lateinit var topAppBar: MaterialToolbar
+    private lateinit var todo: Todo
+    private val todoViewModel: TodoViewModel by activityViewModels()
 
     companion object {
-        private const val ARG_TITLE = "title"
-        private const val ARG_DESCRIPTION = "description"
-        private const val ARG_DUE_DATE = "due_date"
-        private const val ARG_CREATED_AT_DATE = "created_at_date"
+        private const val ARG_TODO_JSON = "todo_json"
 
-        fun newInstance(title: String, description: String, dueDate: Long, createdAt: Long): TodoDetailsFragment {
+        fun newInstance(todo: Todo): TodoDetailsFragment {
             val fragment = TodoDetailsFragment()
             val args = Bundle()
-            args.putString(ARG_TITLE, title)
-            args.putString(ARG_DESCRIPTION, description)
-            args.putLong(ARG_DUE_DATE, dueDate)
-            args.putLong(ARG_CREATED_AT_DATE, createdAt)
+            args.putString(ARG_TODO_JSON, Gson().toJson(todo))
             fragment.arguments = args
             return fragment
         }
@@ -35,7 +37,10 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.setOnClickListener {  } //empty on click to avoid pressing things behind
+
+        todo = Gson().fromJson(requireArguments().getString(ARG_TODO_JSON), Todo::class.java)
+
+        view.setOnClickListener { } //empty on click to avoid pressing things behind
         topAppBar = view.findViewById(R.id.topAppBar)
         titleTextView = view.findViewById(R.id.titleTextView)
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
@@ -52,10 +57,26 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
                     // Handle edit text press
                     true
                 }
+
                 R.id.delete -> {
-                    // Handle favorite icon press
+                    val builder = AlertDialog.Builder(requireContext())
+                    builder.setTitle(requireContext().getString(R.string.delete_task))
+                    builder.setMessage(requireContext().getString(R.string.delete_task_question))
+                    builder.setPositiveButton(
+                        requireContext().getString(R.string.confirm)
+                    ) { dialog, which ->
+                        todoViewModel.deleteTodo(todo)
+                        parentFragmentManager.popBackStack()
+                    }
+                    builder.setNegativeButton(
+                        requireContext().getString(R.string.cancel)
+                    ) { dialog, which -> }
+                    builder.setOnCancelListener { dialog -> }
+                    val dialog = builder.create()
+                    dialog.show()
                     true
                 }
+
                 else -> false
             }
         }
@@ -64,22 +85,18 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
     }
 
     private fun displayTodoDetails() {
-        val title = arguments?.getString(ARG_TITLE)
-        val description = arguments?.getString(ARG_DESCRIPTION)
-        val dueDate = arguments?.getLong(ARG_DUE_DATE)
-        val createdAtDate = arguments?.getLong(ARG_CREATED_AT_DATE)
 
         val dateFormat1 = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
         val dateFormat2 = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-        titleTextView.text = title
-        descriptionTextView.text = description
-        var dateString = dateFormat1.format(dueDate)
-        var timeString = timeFormat.format(dueDate)
+        titleTextView.text = todo.title
+        descriptionTextView.text = todo.description
+        var dateString = dateFormat1.format(todo.dueDate)
+        var timeString = timeFormat.format(todo.dueDate)
         dateTextView.text = "$dateString $timeString"
-        dateString = dateFormat2.format(createdAtDate)
-        timeString = timeFormat.format(createdAtDate)
+        dateString = dateFormat2.format(todo.createdAt)
+        timeString = timeFormat.format(todo.createdAt)
         createdAtTextView.text = "$dateString\n$timeString"
     }
 }
