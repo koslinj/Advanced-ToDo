@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="border_color">#FFFFFF</color>
+    <color name="green_checked">#090</color>
 </resources>
