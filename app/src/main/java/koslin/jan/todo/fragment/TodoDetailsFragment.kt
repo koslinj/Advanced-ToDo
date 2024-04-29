@@ -12,19 +12,22 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
     private lateinit var titleTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var dateTextView: TextView
+    private lateinit var createdAtTextView: TextView
     private lateinit var topAppBar: MaterialToolbar
 
     companion object {
         private const val ARG_TITLE = "title"
         private const val ARG_DESCRIPTION = "description"
         private const val ARG_DUE_DATE = "due_date"
+        private const val ARG_CREATED_AT_DATE = "created_at_date"
 
-        fun newInstance(title: String, description: String, dueDate: Long): TodoDetailsFragment {
+        fun newInstance(title: String, description: String, dueDate: Long, createdAt: Long): TodoDetailsFragment {
             val fragment = TodoDetailsFragment()
             val args = Bundle()
             args.putString(ARG_TITLE, title)
             args.putString(ARG_DESCRIPTION, description)
             args.putLong(ARG_DUE_DATE, dueDate)
+            args.putLong(ARG_CREATED_AT_DATE, createdAt)
             fragment.arguments = args
             return fragment
         }
@@ -37,6 +40,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
         titleTextView = view.findViewById(R.id.titleTextView)
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
         dateTextView = view.findViewById(R.id.dateTextView)
+        createdAtTextView = view.findViewById(R.id.createdAtTextView)
 
         topAppBar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
@@ -63,14 +67,19 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
         val title = arguments?.getString(ARG_TITLE)
         val description = arguments?.getString(ARG_DESCRIPTION)
         val dueDate = arguments?.getLong(ARG_DUE_DATE)
+        val createdAtDate = arguments?.getLong(ARG_CREATED_AT_DATE)
 
-        val dateFormat = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
+        val dateFormat1 = SimpleDateFormat("d MMMM yyyy", Locale.getDefault())
+        val dateFormat2 = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val dateString = dateFormat.format(dueDate)
-        val timeString = timeFormat.format(dueDate)
 
         titleTextView.text = title
         descriptionTextView.text = description
+        var dateString = dateFormat1.format(dueDate)
+        var timeString = timeFormat.format(dueDate)
         dateTextView.text = "$dateString $timeString"
+        dateString = dateFormat2.format(createdAtDate)
+        timeString = timeFormat.format(createdAtDate)
+        createdAtTextView.text = "$dateString\n$timeString"
     }
 }

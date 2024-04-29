@@ -9,5 +9,6 @@ data class Todo(
     val id: Long = 0,
     val title: String,
     val description: String,
-    val dueDate: Long
+    val dueDate: Long,
+    val createdAt: Long = System.currentTimeMillis()
 )
