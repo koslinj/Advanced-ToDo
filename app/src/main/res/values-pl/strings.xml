@@ -6,4 +6,7 @@
     <string name="description">Opis</string>
     <string name="save">Zapisz</string>
     <string name="cancel">ANULUJ</string>
+    <string name="delete_task">Usuń zadanie</string>
+    <string name="delete_task_question">Na pewno chcesz usunąć to zadanie?</string>
+    <string name="confirm">ZATWIERDŹ</string>
 </resources>

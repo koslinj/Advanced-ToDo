@@ -26,13 +26,13 @@ class TodoTouchHelper(private val context: Context, adapter: TodoAdapter) :
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val position = viewHolder.adapterPosition
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("Delete Task")
-        builder.setMessage("Are you sure you want to delete this Task?")
+        builder.setTitle(context.getString(R.string.delete_task))
+        builder.setMessage(context.getString(R.string.delete_task_question))
         builder.setPositiveButton(
-            "Confirm"
+            context.getString(R.string.confirm)
         ) { dialog, which -> adapter.deleteItem(position) }
         builder.setNegativeButton(
-            "Cancel"
+            context.getString(R.string.cancel)
         ) { dialog, which -> adapter.notifyItemChanged(viewHolder.adapterPosition) }
         builder.setOnCancelListener { dialog -> adapter.notifyItemChanged(viewHolder.adapterPosition) }
         val dialog = builder.create()
