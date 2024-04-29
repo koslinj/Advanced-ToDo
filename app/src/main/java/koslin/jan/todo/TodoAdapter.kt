@@ -1,5 +1,6 @@
 package koslin.jan.todo
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +15,13 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TodoAdapter(private var todoList: List<Todo>, private val onTodoDeleted: (Todo) -> Unit) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
+class TodoAdapter(
+    private var todoList: List<Todo>,
+    private val onTodoDeleted: (Todo) -> Unit,
+    private val onTodoClicked: (Todo) -> Unit,
+) : RecyclerView.Adapter<TodoAdapter.ViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val todoTextView: TextView = itemView.findViewById(R.id.todoTextView)
         val todoDateTextView: TextView = itemView.findViewById(R.id.todoDateTextView)
     }
@@ -31,6 +36,11 @@ class TodoAdapter(private var todoList: List<Todo>, private val onTodoDeleted: (
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         holder.todoDateTextView.text = dateFormat.format(todoList[position].dueDate)
+
+        // Set click listener
+        holder.itemView.setOnClickListener {
+            onTodoClicked(todoList[position])
+        }
     }
 
     override fun getItemCount(): Int {
