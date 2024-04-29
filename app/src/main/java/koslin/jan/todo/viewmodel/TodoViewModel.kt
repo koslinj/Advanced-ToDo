@@ -26,4 +26,15 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
             todoList = todoDao.getAllTodosLiveData();
         }
     }
+
+    fun toggleTodoState(todo: Todo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if(todo.status === Todo.Status.ACTIVE) {
+                todoDao.setCompleted(todo.id)
+            } else {
+                todoDao.setActive(todo.id)
+            }
+            todoList = todoDao.getAllTodosLiveData();
+        }
+    }
 }

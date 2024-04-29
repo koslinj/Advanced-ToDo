@@ -1,9 +1,7 @@
 package koslin.jan.todo
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +32,8 @@ class MainActivity : AppCompatActivity() {
         todoAdapter = TodoAdapter(
             emptyList(),
             onTodoDeleted = { todoViewModel.deleteTodo(it) },
-            onTodoClicked = { onTodoClicked(it) }
+            onTodoClicked = { onTodoClicked(it) },
+            onToggleClicked = { todoViewModel.toggleTodoState(it) }
         )
         recyclerView.adapter = todoAdapter
 

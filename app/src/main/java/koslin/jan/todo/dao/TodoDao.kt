@@ -20,4 +20,10 @@ interface TodoDao {
 
     @Delete
     suspend fun delete(todo: Todo)
+
+    @Query("UPDATE todos SET status = 'ACTIVE' WHERE id = :todoId")
+    suspend fun setActive(todoId: Long)
+
+    @Query("UPDATE todos SET status = 'COMPLETED' WHERE id = :todoId")
+    suspend fun setCompleted(todoId: Long)
 }
