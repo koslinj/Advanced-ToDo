@@ -9,4 +9,6 @@
     <string name="delete_task">Usuń zadanie</string>
     <string name="delete_task_question">Na pewno chcesz usunąć to zadanie?</string>
     <string name="confirm">ZATWIERDŹ</string>
+    <string name="details_title">Szczegóły</string>
+    <string name="edit">Edytuj</string>
 </resources>

@@ -9,4 +9,6 @@
     <string name="delete_task">Delete ToDo</string>
     <string name="delete_task_question">Are you sure you want to delete this ToDo?</string>
     <string name="confirm">CONFIRM</string>
+    <string name="details_title">Details</string>
+    <string name="edit">Edit</string>
 </resources>

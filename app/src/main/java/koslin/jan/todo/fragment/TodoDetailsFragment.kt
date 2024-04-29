@@ -3,6 +3,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.MaterialToolbar
 import koslin.jan.todo.R
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -11,6 +12,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
     private lateinit var titleTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var dateTextView: TextView
+    private lateinit var topAppBar: MaterialToolbar
 
     companion object {
         private const val ARG_TITLE = "title"
@@ -31,9 +33,29 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setOnClickListener {  } //empty on click to avoid pressing things behind
+        topAppBar = view.findViewById(R.id.topAppBar)
         titleTextView = view.findViewById(R.id.titleTextView)
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
         dateTextView = view.findViewById(R.id.dateTextView)
+
+        topAppBar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
+        topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.edit -> {
+                    // Handle edit text press
+                    true
+                }
+                R.id.delete -> {
+                    // Handle favorite icon press
+                    true
+                }
+                else -> false
+            }
+        }
+
         displayTodoDetails()
     }
 
