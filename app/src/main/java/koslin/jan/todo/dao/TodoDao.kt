@@ -10,7 +10,10 @@ import koslin.jan.todo.entity.Todo
 @Dao
 interface TodoDao {
     @Insert
-    suspend fun insert(todo: Todo)
+    suspend fun insert(todo: Todo): Long
+
+    @Query("SELECT * FROM todos WHERE id = :id")
+    suspend fun getTodoById(id: Long): Todo?
 
     @Query("SELECT * FROM todos")
     suspend fun getAllTodos(): List<Todo>
