@@ -8,12 +8,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
+import koslin.jan.todo.MainActivity.Companion.ACTION_SHOW_TODO_DETAILS
 import koslin.jan.todo.entity.Todo
-import koslin.jan.todo.fragment.TodoDetailsFragment
 
 class Notification : BroadcastReceiver() {
 
@@ -39,14 +40,18 @@ class Notification : BroadcastReceiver() {
             .setAutoCancel(true)
 
         // Create an explicit intent for launching the app when the notification is clicked
-        val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent =
-            PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+        val detailsIntent = Intent(context, MainActivity::class.java).apply {
+            action = ACTION_SHOW_TODO_DETAILS
+            putExtra(EXTRA_TODO, Gson().toJson(todo))
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            todo.id.toInt(),
+            detailsIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
         notificationBuilder.setContentIntent(pendingIntent)
 
         // Show the notification
@@ -57,12 +62,13 @@ class Notification : BroadcastReceiver() {
             ) != PackageManager.PERMISSION_GRANTED
         ) return
         notificationManager.notify(todo.id.toInt(), notificationBuilder.build())
+        Log.d("ID_LOG", todo.id.toString())
     }
 
     private fun createNotificationChannel(context: Context) {
         val name = "Todo Notification"
         val descriptionText = "Reminder for Todo items"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
@@ -73,6 +79,6 @@ class Notification : BroadcastReceiver() {
 
     companion object {
         private const val CHANNEL_ID = "TodoNotificationChannel"
-        const val EXTRA_TODO = "todo_id"
+        const val EXTRA_TODO = "todo_json"
     }
 }

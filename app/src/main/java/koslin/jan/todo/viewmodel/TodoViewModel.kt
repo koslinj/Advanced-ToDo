@@ -30,21 +30,22 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
 
     fun addTodo(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
-            todoDao.insert(todo)
-            todoList = todoDao.getAllTodosLiveData();
+            val todoId = todoDao.insert(todo)
+            val insertedTodo = todoDao.getTodoById(todoId)!!
+            todoList = todoDao.getAllTodosLiveData()
 
             val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(application, Notification::class.java).apply {
-                putExtra(EXTRA_TODO, Gson().toJson(todo))
+                putExtra(EXTRA_TODO, Gson().toJson(insertedTodo))
             }
             val pendingIntent = PendingIntent.getBroadcast(
                 application,
-                0,
+                todoId.toInt(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
-            val dueDate = todo.dueDate
+            val dueDate = insertedTodo.dueDate
             val notificationTime = dueDate - 10 * 60 * 1000 // 10 minutes before due date
             Log.d("ALARM", "OBLICZONY")
             if (alarmManager.canScheduleExactAlarms()) {
