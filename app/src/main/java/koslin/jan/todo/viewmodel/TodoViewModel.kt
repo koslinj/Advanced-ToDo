@@ -24,7 +24,15 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            todoList.postValue(todoDao.getAllTodos())
+            val sharedPreferences = application.getSharedPreferences("todo_prefs", Context.MODE_PRIVATE)
+            val showActiveTodos = sharedPreferences.getBoolean("show_active_todos", false)
+
+            // Update todoList based on the value
+            if (showActiveTodos) {
+                todoList.postValue(todoDao.getActiveTodos())
+            } else {
+                todoList.postValue(todoDao.getAllTodos())
+            }
         }
     }
 

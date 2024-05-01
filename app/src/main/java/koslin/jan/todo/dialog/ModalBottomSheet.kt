@@ -1,5 +1,7 @@
 package koslin.jan.todo.dialog
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,22 +16,26 @@ import koslin.jan.todo.viewmodel.TodoViewModel
 class ModalBottomSheet : BottomSheetDialogFragment(R.layout.sheet) {
     private val todoViewModel: TodoViewModel by activityViewModels()
     private lateinit var activeTodosSwitch: MaterialSwitch
+    private lateinit var sharedPreferences: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedPreferences = requireContext().getSharedPreferences("todo_prefs", Context.MODE_PRIVATE)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         activeTodosSwitch = view.findViewById(R.id.activeTodosSwitch)
 
+        val showActiveTodos = sharedPreferences.getBoolean("show_active_todos", false)
+        activeTodosSwitch.isChecked = showActiveTodos
+
         activeTodosSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                // Show all todos
-                showToast("Showing active todos")
-                todoViewModel.showActiveOnly(true)
-            } else {
-                // Hide completed todos
-                showToast("Showing All todos")
-                todoViewModel.showActiveOnly(false)
-            }
+            sharedPreferences.edit().putBoolean("show_active_todos", isChecked).apply()
+
+            showToast(if (isChecked) "ACTIVE ONLY" else "ALL")
+            todoViewModel.showActiveOnly(isChecked)
         }
 
         val behavior = (dialog as BottomSheetDialog).behavior
