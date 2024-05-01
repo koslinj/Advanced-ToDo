@@ -11,4 +11,5 @@
     <string name="confirm">CONFIRM</string>
     <string name="details_title">Details</string>
     <string name="edit">Edit</string>
+    <string name="activeTodosSwitch">Active Only</string>
 </resources>

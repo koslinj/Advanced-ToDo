@@ -11,4 +11,5 @@
     <string name="confirm">ZATWIERDŹ</string>
     <string name="details_title">Szczegóły</string>
     <string name="edit">Edytuj</string>
+    <string name="activeTodosSwitch">Tylko Aktywne</string>
 </resources>
