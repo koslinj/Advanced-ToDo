@@ -1,24 +1,15 @@
 package koslin.jan.todo
 
-import android.Manifest
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import koslin.jan.todo.dialog.ModalBottomSheet
 import koslin.jan.todo.dialog.NewTodoDialog
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.fragment.TodoDetailsFragment
@@ -28,6 +19,7 @@ import koslin.jan.todo.viewmodel.TodoViewModel
 class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var newTodoButton: FloatingActionButton
+    private lateinit var settingsButton: Button
     private lateinit var todoAdapter: TodoAdapter
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
@@ -49,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         newTodoButton = findViewById(R.id.newTodoButton)
+        settingsButton = findViewById(R.id.settingsButton)
         recyclerView = findViewById(R.id.mainRecyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -68,6 +61,10 @@ class MainActivity : AppCompatActivity() {
             newTodoDialog.show(supportFragmentManager, "newTodoTag")
         }
 
+        settingsButton.setOnClickListener {
+            showBottomSheet()
+        }
+
         todoViewModel.todoList.observe(this) { todos ->
             todoAdapter.updateData(todos)
         }
@@ -75,6 +72,11 @@ class MainActivity : AppCompatActivity() {
         permissionsHandler = PermissionsHandler(this)
         permissionsHandler.handleNotificationAndExactAlarm()
 
+    }
+
+    private fun showBottomSheet() {
+        val modalBottomSheet = ModalBottomSheet()
+        modalBottomSheet.show(supportFragmentManager, "settingsBottomSheet")
     }
 
 
