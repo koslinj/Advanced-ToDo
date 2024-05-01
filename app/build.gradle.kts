@@ -37,8 +37,9 @@ android {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("androidx.preference:preference-ktx:1.2.0")
 
+    implementation("com.google.code.gson:gson:2.10")
 
     val room_version = "2.6.1"
     kapt("androidx.room:room-compiler:$room_version")
