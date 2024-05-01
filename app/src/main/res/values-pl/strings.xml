@@ -12,4 +12,7 @@
     <string name="details_title">Szczegóły</string>
     <string name="edit">Edytuj</string>
     <string name="activeTodosSwitch">Pokazuj tylko aktywne zadania</string>
+    <string name="notifications">Powiadomienia</string>
+    <string name="before">Moment powiadomienia</string>
+    <string name="display">Wyświetlanie</string>
 </resources>

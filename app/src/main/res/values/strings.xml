@@ -12,4 +12,7 @@
     <string name="details_title">Details</string>
     <string name="edit">Edit</string>
     <string name="activeTodosSwitch">Show only active todos</string>
+    <string name="notifications">Notifications</string>
+    <string name="before">Moment of notification</string>
+    <string name="display">Display</string>
 </resources>
