@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import koslin.jan.todo.App
@@ -19,12 +19,19 @@ import kotlinx.coroutines.launch
 
 class TodoViewModel(private val application: Application) : AndroidViewModel(application) {
     private val todoDao = App.database.todoDao()
-    var todoList: LiveData<List<Todo>> = todoDao.getAllTodosLiveData()
+
+    var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoList.postValue(todoDao.getAllTodos())
+        }
+    }
 
     fun deleteTodo(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.delete(todo)
-            todoList = todoDao.getAllTodosLiveData();
+            todoList.postValue(todoDao.getAllTodos())
         }
     }
 
@@ -32,7 +39,7 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             val todoId = todoDao.insert(todo)
             val insertedTodo = todoDao.getTodoById(todoId)!!
-            todoList = todoDao.getAllTodosLiveData()
+            todoList.postValue(todoDao.getAllTodos())
 
             scheduleReminder(insertedTodo)
         }
@@ -45,8 +52,22 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             } else {
                 todoDao.setActive(todo.id)
             }
-            todoList = todoDao.getAllTodosLiveData();
+            todoList.postValue(todoDao.getAllTodos())
         }
+    }
+
+    // Function to switch between showing active and all todos
+    fun showActiveOnly(bool: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (bool) {
+                // Show only active todos
+                todoList.postValue(todoDao.getActiveTodos())
+            } else {
+                // Show all todos
+                todoList.postValue(todoDao.getAllTodos())
+            }
+        }
+
     }
 
     private fun scheduleReminder(insertedTodo: Todo) {

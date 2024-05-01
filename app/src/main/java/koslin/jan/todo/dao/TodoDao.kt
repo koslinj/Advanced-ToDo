@@ -21,6 +21,9 @@ interface TodoDao {
     @Query("SELECT * FROM todos")
     fun getAllTodosLiveData(): LiveData<List<Todo>>
 
+    @Query("SELECT * FROM todos WHERE status = 'ACTIVE'")
+    fun getActiveTodos(): List<Todo>
+
     @Delete
     suspend fun delete(todo: Todo)
 
