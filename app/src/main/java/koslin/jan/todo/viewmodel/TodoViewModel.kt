@@ -34,24 +34,7 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             val insertedTodo = todoDao.getTodoById(todoId)!!
             todoList = todoDao.getAllTodosLiveData()
 
-            val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val intent = Intent(application, Notification::class.java).apply {
-                putExtra(EXTRA_TODO, Gson().toJson(insertedTodo))
-            }
-            val pendingIntent = PendingIntent.getBroadcast(
-                application,
-                todoId.toInt(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
-            val dueDate = insertedTodo.dueDate
-            val notificationTime = dueDate - 10 * 60 * 1000 // 10 minutes before due date
-            Log.d("ALARM", "OBLICZONY")
-            if (alarmManager.canScheduleExactAlarms()) {
-                Log.d("ALARM", "USTAWIONY")
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
-            }
+            scheduleReminder(insertedTodo)
         }
     }
 
@@ -63,6 +46,27 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
                 todoDao.setActive(todo.id)
             }
             todoList = todoDao.getAllTodosLiveData();
+        }
+    }
+
+    private fun scheduleReminder(insertedTodo: Todo) {
+        val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(application, Notification::class.java).apply {
+            putExtra(EXTRA_TODO, Gson().toJson(insertedTodo))
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            application,
+            insertedTodo.id.toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val dueDate = insertedTodo.dueDate
+        val notificationTime = dueDate - 10 * 60 * 1000 // 10 minutes before due date
+        Log.d("ALARM", "OBLICZONY")
+        if (alarmManager.canScheduleExactAlarms()) {
+            Log.d("ALARM", "USTAWIONY")
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
         }
     }
 }
