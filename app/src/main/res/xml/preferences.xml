@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        app:key="notifications"
-        app:title="@string/activeTodosSwitch"/>
+    <PreferenceCategory
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:title="@string/display">
+        <SwitchPreferenceCompat
+            app:key="notifications"
+            app:title="@string/activeTodosSwitch"
+            app:icon="@drawable/visibility_icon"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:title="@string/notifications">
+        <ListPreference
+            app:defaultValue="60"
+            app:entries="@array/refetching_entries"
+            app:entryValues="@array/refetching_values"
+            app:icon="@drawable/timer_icon"
+            app:key="before"
+            app:title="@string/before"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
