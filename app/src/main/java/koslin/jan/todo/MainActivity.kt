@@ -1,7 +1,6 @@
 package koslin.jan.todo
 
 import android.Manifest
-import android.app.AlarmManager
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,14 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
 
-    private var requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (!isGranted) {
-                Log.d("POST_NOTIFICATION_PERMISSION", "USER DENIED PERMISSION")
-            } else {
-                Log.d("POST_NOTIFICATION_PERMISSION", "USER GRANTED PERMISSION")
-            }
-        }
+    private lateinit var permissionsHandler: PermissionsHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,62 +72,14 @@ class MainActivity : AppCompatActivity() {
             todoAdapter.updateData(todos)
         }
 
-        requestNotificationPermission()
+        permissionsHandler = PermissionsHandler(this)
+        permissionsHandler.handleNotificationAndExactAlarm()
 
-        val alarmManager: AlarmManager = application.getSystemService<AlarmManager>()!!
-        if (alarmManager.canScheduleExactAlarms()) {
-            // Set exact alarms.
-            Toast.makeText(this, "ALARMY I PRZYPOMNIENIA DZIAŁAJĄ", Toast.LENGTH_SHORT).show()
-        } else {
-            showExplanationAndRequestPermission()
-        }
-
-    }
-
-    private fun requestNotificationPermission() {
-        val permission = Manifest.permission.POST_NOTIFICATIONS
-        when {
-            ContextCompat.checkSelfPermission(
-                this, permission
-            ) != PackageManager.PERMISSION_GRANTED -> {
-                requestPermissionLauncher.launch(permission)
-            }
-        }
-    }
-
-    private fun requestScheduleExactAlarmPermission() {
-        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-            data = Uri.parse("package:koslin.jan.todo")
-        }
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            // Obsługa przypadku, gdy urządzenie nie obsługuje akcji ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-            Toast.makeText(
-                this,
-                "Twoje urządzenie nie obsługuje tej funkcji.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
-
-    private fun showExplanationAndRequestPermission() {
-        AlertDialog.Builder(this)
-            .setTitle("Prośba o uprawnienie")
-            .setMessage("Aplikacja potrzebuje uprawnienia do planowania dokładnych alarmów w celu zapewnienia dokładnych powiadomień.")
-            .setPositiveButton("Przyznaj uprawnienie") { dialog, _ ->
-                requestScheduleExactAlarmPermission()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Anuluj") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
     }
 
 
     fun showDetailsFragment(todo: Todo) {
-        // Replace the current fragment with a new fragment displaying todo details
+        // Replace the current fragment with a new fragment displaying details of todoo
         val fragment = TodoDetailsFragment.newInstance(todo)
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
