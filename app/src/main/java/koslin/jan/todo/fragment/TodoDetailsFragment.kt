@@ -1,9 +1,11 @@
 package koslin.jan.todo.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.appbar.MaterialToolbar
@@ -51,8 +53,33 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
             parentFragmentManager.popBackStack()
         }
 
+        val initialIcon = if (todo.notification) R.drawable.notifications_active_icon else R.drawable.notifications_off_icon
+        val initialChecked = todo.notification
+
+        // Find the MenuItem corresponding to notificationsToggle
+        val notificationsMenuItem = topAppBar.menu.findItem(R.id.notificationsToggle)
+
+        // Set initial icon and checked state
+        notificationsMenuItem.setIcon(initialIcon)
+        notificationsMenuItem.isChecked = initialChecked
+
         topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.notificationsToggle -> {
+                    // Toggle the icon based on the current state
+                    if (menuItem.isChecked) {
+                        Log.d("MENU_", "ZMIENIA NA OFF")
+                        menuItem.setIcon(R.drawable.notifications_off_icon)
+                        menuItem.isChecked = false
+                    } else {
+                        menuItem.isChecked = true
+                        Log.d("MENU_", "ZMIENIA NA ON")
+                        menuItem.setIcon(R.drawable.notifications_active_icon)
+                    }
+                    todoViewModel.toggleTodoNotifications(todo)
+                    true
+                }
+
                 R.id.edit -> {
                     // Handle edit text press
                     true

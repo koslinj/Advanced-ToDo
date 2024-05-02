@@ -65,6 +65,17 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         }
     }
 
+    fun toggleTodoNotifications(todo: Todo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (todo.notification == true) {
+                todoDao.turnOffNotifications(todo.id)
+            } else {
+                todoDao.turnOnNotifications(todo.id)
+            }
+            todoList.postValue(todoDao.getAllTodos())
+        }
+    }
+
     // Function to switch between showing active and all todos
     fun showActiveOnly(bool: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {

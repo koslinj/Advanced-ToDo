@@ -11,7 +11,8 @@ data class Todo(
     val description: String,
     val dueDate: Long,
     val createdAt: Long = System.currentTimeMillis(),
-    val status: Status = Status.ACTIVE
+    val status: Status = Status.ACTIVE,
+    val notification: Boolean = true
 ) {
     enum class Status {
         ACTIVE,

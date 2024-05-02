@@ -32,4 +32,10 @@ interface TodoDao {
 
     @Query("UPDATE todos SET status = 'COMPLETED' WHERE id = :todoId")
     suspend fun setCompleted(todoId: Long)
+
+    @Query("UPDATE todos SET notification = false WHERE id = :todoId")
+    suspend fun turnOffNotifications(todoId: Long)
+
+    @Query("UPDATE todos SET notification = true WHERE id = :todoId")
+    suspend fun turnOnNotifications(todoId: Long)
 }
