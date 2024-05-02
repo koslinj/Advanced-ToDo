@@ -91,8 +91,15 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        // Cancel any existing alarms with the same pending intent
+        // chwilowo chyba nie potrzebne ale do update sie moze przydac
+        alarmManager.cancel(pendingIntent)
+
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(application)
+        val notificationInterval = sharedPrefs.getString(Keys.BEFORE_KEY, "600")?.toIntOrNull() ?: 600
+
         val dueDate = insertedTodo.dueDate
-        val notificationTime = dueDate - 10 * 60 * 1000 // 10 minutes before due date
+        val notificationTime = dueDate - notificationInterval * 1000
         Log.d("ALARM", "OBLICZONY")
         if (alarmManager.canScheduleExactAlarms()) {
             Log.d("ALARM", "USTAWIONY")
