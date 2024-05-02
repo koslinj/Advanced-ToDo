@@ -15,4 +15,5 @@
     <string name="notifications">Powiadomienia</string>
     <string name="before">Moment powiadomienia</string>
     <string name="display">Wyświetlanie</string>
+    <string name="notifToggle">Włącz/Wyłącz powiadomienia</string>
 </resources>

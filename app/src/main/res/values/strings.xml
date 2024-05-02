@@ -15,4 +15,5 @@
     <string name="notifications">Notifications</string>
     <string name="before">Moment of notification</string>
     <string name="display">Display</string>
+    <string name="notifToggle">turn on/off notifications</string>
 </resources>
