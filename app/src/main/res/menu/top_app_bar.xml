@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/notificationsToggle"
+        android:icon="@drawable/notifications_active_icon"
+        android:checkable="true"
+        android:checked="true"
+        android:title="@string/notifToggle"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/edit"
         android:icon="@drawable/edit_icon"
         android:title="@string/edit"
