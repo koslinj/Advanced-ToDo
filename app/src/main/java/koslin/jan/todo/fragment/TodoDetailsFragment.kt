@@ -2,6 +2,7 @@ package koslin.jan.todo.fragment
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -22,6 +23,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
     private lateinit var dateTextView: TextView
     private lateinit var createdAtTextView: TextView
     private lateinit var topAppBar: MaterialToolbar
+    private lateinit var notificationsMenuItem: MenuItem
     private lateinit var todo: Todo
     private val todoViewModel: TodoViewModel by activityViewModels()
 
@@ -44,6 +46,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
 
         view.setOnClickListener { } //empty on click to avoid pressing things behind
         topAppBar = view.findViewById(R.id.topAppBar)
+        notificationsMenuItem = topAppBar.menu.findItem(R.id.notificationsToggle)
         titleTextView = view.findViewById(R.id.titleTextView)
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
         dateTextView = view.findViewById(R.id.dateTextView)
@@ -53,28 +56,20 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
             parentFragmentManager.popBackStack()
         }
 
-        val initialIcon = if (todo.notification) R.drawable.notifications_active_icon else R.drawable.notifications_off_icon
-        val initialChecked = todo.notification
-
-        // Find the MenuItem corresponding to notificationsToggle
-        val notificationsMenuItem = topAppBar.menu.findItem(R.id.notificationsToggle)
-
-        // Set initial icon and checked state
-        notificationsMenuItem.setIcon(initialIcon)
-        notificationsMenuItem.isChecked = initialChecked
+        val initialNotifIcon =
+            if (todo.notification) R.drawable.notifications_active_icon
+            else R.drawable.notifications_off_icon
+        val initialNotifChecked = todo.notification
+        changeNotificationIconState(initialNotifIcon, initialNotifChecked)
 
         topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.notificationsToggle -> {
                     // Toggle the icon based on the current state
                     if (menuItem.isChecked) {
-                        Log.d("MENU_", "ZMIENIA NA OFF")
-                        menuItem.setIcon(R.drawable.notifications_off_icon)
-                        menuItem.isChecked = false
+                        changeNotificationIconState(R.drawable.notifications_off_icon, false)
                     } else {
-                        menuItem.isChecked = true
-                        Log.d("MENU_", "ZMIENIA NA ON")
-                        menuItem.setIcon(R.drawable.notifications_active_icon)
+                        changeNotificationIconState(R.drawable.notifications_active_icon, true)
                     }
                     todoViewModel.toggleTodoNotifications(todo)
                     true
@@ -109,6 +104,11 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
         }
 
         displayTodoDetails()
+    }
+
+    private fun changeNotificationIconState(icon: Int, checked: Boolean) {
+        notificationsMenuItem.setIcon(icon)
+        notificationsMenuItem.isChecked = checked
     }
 
     private fun displayTodoDetails() {
