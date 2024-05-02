@@ -9,23 +9,24 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import koslin.jan.todo.App
 import koslin.jan.todo.Notification
 import koslin.jan.todo.Notification.Companion.EXTRA_TODO
+import koslin.jan.todo.config.Keys
 import koslin.jan.todo.entity.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TodoViewModel(private val application: Application) : AndroidViewModel(application) {
     private val todoDao = App.database.todoDao()
-
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
+    private val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(application)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val sharedPreferences = application.getSharedPreferences("todo_prefs", Context.MODE_PRIVATE)
-            val showActiveTodos = sharedPreferences.getBoolean("show_active_todos", false)
+            val showActiveTodos = defaultPreferences.getBoolean(Keys.VISIBILITY_KEY, false)
 
             // Update todoList based on the value
             if (showActiveTodos) {

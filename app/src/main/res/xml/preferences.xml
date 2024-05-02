@@ -6,7 +6,7 @@
         app:allowDividerBelow="true"
         app:title="@string/display">
         <SwitchPreferenceCompat
-            app:key="notifications"
+            app:key="visibility"
             app:title="@string/activeTodosSwitch"
             app:icon="@drawable/visibility_icon"/>
     </PreferenceCategory>
