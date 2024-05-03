@@ -25,11 +25,14 @@ interface TodoDao {
     @Query("SELECT * FROM todos")
     fun getAllTodosLiveData(): LiveData<List<Todo>>
 
+    @Query("SELECT * FROM todos WHERE category IN (:categories) AND status = :status")
+    suspend fun getTodosByCategoriesAndStatus(categories: Set<String>, status: String): List<Todo>
+
     @Query("SELECT * FROM todos WHERE status = 'ACTIVE'")
-    fun getActiveTodos(): List<Todo>
+    suspend fun getActiveTodos(): List<Todo>
 
     @Query("SELECT * FROM todos WHERE category IN (:categories)")
-    suspend fun getTodosByCategories(categories: Array<String>): List<Todo>
+    suspend fun getTodosByCategories(categories: Set<String>): List<Todo>
 
     @Delete
     suspend fun delete(todo: Todo)

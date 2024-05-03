@@ -23,24 +23,21 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
     private val todoDao = App.database.todoDao()
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     private val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(application)
+    private var showActiveTodos = defaultPreferences.getBoolean(Keys.VISIBILITY_KEY, false)
+    private var categoriesToShow = defaultPreferences.getStringSet(Keys.CATEGORIES_KEY, setOf())
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val showActiveTodos = defaultPreferences.getBoolean(Keys.VISIBILITY_KEY, false)
-
             // Update todoList based on the value
-            if (showActiveTodos) {
-                todoList.postValue(todoDao.getActiveTodos())
-            } else {
-                todoList.postValue(todoDao.getAllTodos())
-            }
+            refreshVisibleTodos()
         }
     }
 
     fun deleteTodo(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.delete(todo)
-            todoList.postValue(todoDao.getAllTodos())
+
+            refreshVisibleTodos()
         }
     }
 
@@ -48,7 +45,8 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             val todoId = todoDao.insert(todo)
             val insertedTodo = todoDao.getTodoById(todoId)!!
-            todoList.postValue(todoDao.getAllTodos())
+
+            refreshVisibleTodos()
 
             scheduleReminder(insertedTodo)
         }
@@ -58,7 +56,8 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.update(todo)
             val updatedTodo = todoDao.getTodoById(todo.id)!!
-            todoList.postValue(todoDao.getAllTodos())
+
+            refreshVisibleTodos()
 
             scheduleReminder(updatedTodo)
         }
@@ -71,20 +70,8 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             } else {
                 todoDao.setActive(todo.id)
             }
-            todoList.postValue(todoDao.getAllTodos())
-        }
-    }
 
-    fun toggleTodoNotifications(todo: Todo) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (todo.notification == true) {
-                todoDao.turnOffNotifications(todo.id)
-                cancelNotificationAlarm(todo)
-            } else {
-                todoDao.turnOnNotifications(todo.id)
-                scheduleReminder(todo)
-            }
-            todoList.postValue(todoDao.getAllTodos())
+            refreshVisibleTodos()
         }
     }
 
@@ -92,7 +79,8 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.turnOnNotifications(todo.id)
             scheduleReminder(todo)
-            todoList.postValue(todoDao.getAllTodos())
+
+            refreshVisibleTodos()
         }
     }
 
@@ -100,26 +88,32 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.turnOffNotifications(todo.id)
             cancelNotificationAlarm(todo)
-            todoList.postValue(todoDao.getAllTodos())
+
+            refreshVisibleTodos()
         }
     }
 
     // Function to switch between showing active and all todos
     fun showActiveOnly(bool: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (bool) {
-                // Show only active todos
-                todoList.postValue(todoDao.getActiveTodos())
-            } else {
-                // Show all todos
-                todoList.postValue(todoDao.getAllTodos())
-            }
+            showActiveTodos = bool
+            refreshVisibleTodos()
         }
     }
 
-    fun fetchTodosByCategories(cats: Array<String>) {
+    fun fetchTodosByCategories(selectedCategories: HashSet<String>) {
         viewModelScope.launch(Dispatchers.IO) {
-            todoList.postValue(todoDao.getTodosByCategories(cats))
+            categoriesToShow = selectedCategories
+            Log.d("TEST", categoriesToShow.toString())
+            refreshVisibleTodos()
+        }
+    }
+
+    private suspend fun refreshVisibleTodos() {
+        if (showActiveTodos) {
+            todoList.postValue(todoDao.getTodosByCategoriesAndStatus(categoriesToShow!!, "ACTIVE"))
+        } else {
+            todoList.postValue(todoDao.getTodosByCategories(categoriesToShow!!))
         }
     }
 
@@ -148,7 +142,6 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         )
 
         // Cancel any existing alarms with the same pending intent
-        // chwilowo chyba nie potrzebne ale do update sie moze przydac
         alarmManager.cancel(pendingIntent)
 
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(application)
