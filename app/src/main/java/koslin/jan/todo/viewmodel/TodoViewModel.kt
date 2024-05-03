@@ -54,6 +54,16 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         }
     }
 
+    fun updateTodo(todo: Todo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.update(todo)
+            val updatedTodo = todoDao.getTodoById(todo.id)!!
+            todoList.postValue(todoDao.getAllTodos())
+
+            scheduleReminder(updatedTodo)
+        }
+    }
+
     fun toggleTodoState(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
             if (todo.status === Todo.Status.ACTIVE) {

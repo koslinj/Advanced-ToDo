@@ -5,12 +5,16 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import koslin.jan.todo.entity.Todo
 
 @Dao
 interface TodoDao {
     @Insert
     suspend fun insert(todo: Todo): Long
+
+    @Update
+    suspend fun update(todo: Todo)
 
     @Query("SELECT * FROM todos WHERE id = :id")
     suspend fun getTodoById(id: Long): Todo?
