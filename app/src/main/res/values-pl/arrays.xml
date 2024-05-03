@@ -13,8 +13,8 @@
     </string-array>
 
     <string-array name="todo_categories_entries">
-        <item>Work</item>
-        <item>Family</item>
+        <item>Praca</item>
+        <item>Rodzina</item>
         <item>Sport</item>
     </string-array>
     <string-array name="todo_categories_values">
