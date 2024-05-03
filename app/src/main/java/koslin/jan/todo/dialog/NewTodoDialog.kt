@@ -71,7 +71,11 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         val titleStr = title.text.toString()
         val descStr = desc.text.toString()
         val dueDate = dateTimeViewModel.selectedDateTime.value!!
-        val cat = category.selectedItem as String
+
+        val catEntries = resources.getStringArray(R.array.todo_categories_entries)
+        val catValues = resources.getStringArray(R.array.todo_categories_values)
+        val pos = catEntries.indexOf(category.selectedItem)
+        val cat = catValues[pos]
 
         val todo = Todo(title = titleStr, description = descStr, dueDate = dueDate, category = cat)
         todoViewModel.addTodo(todo)
