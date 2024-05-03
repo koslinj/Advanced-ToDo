@@ -20,6 +20,7 @@ import java.util.Locale
 
 class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodoDialog.TodoUpdateListener {
     private lateinit var titleTextView: TextView
+    private lateinit var categoryTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var dateTextView: TextView
     private lateinit var createdAtTextView: TextView
@@ -49,6 +50,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodo
         topAppBar = view.findViewById(R.id.topAppBar)
         notificationsMenuItem = topAppBar.menu.findItem(R.id.notificationsToggle)
         titleTextView = view.findViewById(R.id.titleTextView)
+        categoryTextView = view.findViewById(R.id.categoryTextView)
         descriptionTextView = view.findViewById(R.id.descriptionTextView)
         dateTextView = view.findViewById(R.id.dateTextView)
         createdAtTextView = view.findViewById(R.id.createdAtTextView)
@@ -125,6 +127,14 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodo
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
         titleTextView.text = todo.title
+
+        val catPrefixStr = requireContext().getString(R.string.category)
+        val catEntries = resources.getStringArray(R.array.todo_categories_entries)
+        val catValues = resources.getStringArray(R.array.todo_categories_values)
+        val pos = catValues.indexOf(todo.category)
+        val cat = catEntries[pos]
+        categoryTextView.text = "$catPrefixStr: $cat"
+
         descriptionTextView.text = todo.description
         var dateString = dateFormat1.format(todo.dueDate)
         var timeString = timeFormat.format(todo.dueDate)
