@@ -69,9 +69,27 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch(Dispatchers.IO) {
             if (todo.notification == true) {
                 todoDao.turnOffNotifications(todo.id)
+                cancelNotificationAlarm(todo)
             } else {
                 todoDao.turnOnNotifications(todo.id)
+                scheduleReminder(todo)
             }
+            todoList.postValue(todoDao.getAllTodos())
+        }
+    }
+
+    fun turnOnTodoNotifications(todo: Todo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.turnOnNotifications(todo.id)
+            scheduleReminder(todo)
+            todoList.postValue(todoDao.getAllTodos())
+        }
+    }
+
+    fun turnOffTodoNotifications(todo: Todo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.turnOffNotifications(todo.id)
+            cancelNotificationAlarm(todo)
             todoList.postValue(todoDao.getAllTodos())
         }
     }
@@ -88,6 +106,18 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             }
         }
 
+    }
+
+    private fun cancelNotificationAlarm(todo: Todo) {
+        val alarmManager = application.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(application, Notification::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            application,
+            todo.id.toInt(),
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(pendingIntent)
     }
 
     private fun scheduleReminder(insertedTodo: Todo) {
@@ -107,7 +137,8 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         alarmManager.cancel(pendingIntent)
 
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(application)
-        val notificationInterval = sharedPrefs.getString(Keys.BEFORE_KEY, "600")?.toIntOrNull() ?: 600
+        val notificationInterval =
+            sharedPrefs.getString(Keys.BEFORE_KEY, "600")?.toIntOrNull() ?: 600
 
         val dueDate = insertedTodo.dueDate
         val notificationTime = dueDate - notificationInterval * 1000

@@ -68,10 +68,11 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
                     // Toggle the icon based on the current state
                     if (menuItem.isChecked) {
                         changeNotificationIconState(R.drawable.notifications_off_icon, false)
+                        todoViewModel.turnOffTodoNotifications(todo)
                     } else {
                         changeNotificationIconState(R.drawable.notifications_active_icon, true)
+                        todoViewModel.turnOnTodoNotifications(todo)
                     }
-                    todoViewModel.toggleTodoNotifications(todo)
                     true
                 }
 
