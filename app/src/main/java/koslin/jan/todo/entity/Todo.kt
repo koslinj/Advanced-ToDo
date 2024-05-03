@@ -1,6 +1,7 @@
 package koslin.jan.todo.entity
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "todos")
@@ -15,6 +16,9 @@ data class Todo(
     val status: Status = Status.ACTIVE,
     val notification: Boolean = true
 ) {
+    @Ignore
+    var attachments: List<Attachment> = listOf() // List of attachments for the to_do
+
     enum class Status {
         ACTIVE,
         COMPLETED
