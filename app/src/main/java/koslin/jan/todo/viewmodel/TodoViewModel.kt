@@ -15,6 +15,7 @@ import koslin.jan.todo.App
 import koslin.jan.todo.Notification
 import koslin.jan.todo.Notification.Companion.EXTRA_TODO
 import koslin.jan.todo.config.Keys
+import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,6 +41,22 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             refreshVisibleTodos()
         }
     }
+
+    fun addTodoWithAttachments(todo: Todo, attachments: List<Attachment>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val todoId = todoDao.insert(todo)
+            attachments.forEach { attachment ->
+                attachment.todoId = todoId
+                todoDao.insertAttachment(attachment)
+            }
+            val insertedTodo = todoDao.getTodoById(todoId)!!
+
+            refreshVisibleTodos()
+
+            scheduleReminder(insertedTodo)
+        }
+    }
+
 
     fun addTodo(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
