@@ -17,5 +17,9 @@
         <item>Family</item>
         <item>Sport</item>
     </string-array>
-
+    <string-array name="todo_categories_values">
+        <item>Work</item>
+        <item>Family</item>
+        <item>Sport</item>
+    </string-array>
 </resources>
