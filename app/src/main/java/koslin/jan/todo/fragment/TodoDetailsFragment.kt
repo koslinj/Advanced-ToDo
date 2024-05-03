@@ -12,12 +12,13 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import koslin.jan.todo.R
+import koslin.jan.todo.dialog.UpdateTodoDialog
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.viewmodel.TodoViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
+class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodoDialog.TodoUpdateListener {
     private lateinit var titleTextView: TextView
     private lateinit var descriptionTextView: TextView
     private lateinit var dateTextView: TextView
@@ -77,7 +78,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
                 }
 
                 R.id.edit -> {
-                    // Handle edit text press
+                    showUpdateTodoDialog(todo)
                     true
                 }
 
@@ -107,6 +108,11 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
         displayTodoDetails()
     }
 
+    fun showUpdateTodoDialog(todo: Todo) {
+        val dialog = UpdateTodoDialog.newInstance(todo)
+        dialog.show(childFragmentManager, "newTodoTag")
+    }
+
     private fun changeNotificationIconState(icon: Int, checked: Boolean) {
         notificationsMenuItem.setIcon(icon)
         notificationsMenuItem.isChecked = checked
@@ -126,5 +132,10 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details) {
         dateString = dateFormat2.format(todo.createdAt)
         timeString = timeFormat.format(todo.createdAt)
         createdAtTextView.text = "$dateString\n$timeString"
+    }
+
+    override fun onTodoUpdated(todo: Todo) {
+        this.todo = todo
+        displayTodoDetails()
     }
 }
