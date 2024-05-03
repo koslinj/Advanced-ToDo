@@ -9,6 +9,7 @@ data class Todo(
     val id: Long = 0,
     val title: String,
     val description: String,
+    val category: String,
     val dueDate: Long,
     val createdAt: Long = System.currentTimeMillis(),
     val status: Status = Status.ACTIVE,
