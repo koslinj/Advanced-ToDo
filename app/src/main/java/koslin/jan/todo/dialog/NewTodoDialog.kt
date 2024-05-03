@@ -1,8 +1,12 @@
 package koslin.jan.todo.dialog
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Spinner
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.textfield.TextInputEditText
@@ -19,18 +23,22 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private lateinit var dateButton: Button
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
+    private lateinit var category: Spinner
 
     private val dateTimeViewModel: DateTimeViewModel by activityViewModels()
     private val todoViewModel: TodoViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //dialog?.window?.setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT)
+//        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+//        }
 
         saveButton = view.findViewById(R.id.saveButton)
         dateButton = view.findViewById(R.id.dateButton)
         title = view.findViewById(R.id.title)
         desc = view.findViewById(R.id.desc)
+        category = view.findViewById(R.id.categorySpinner)
 
         saveButton.setOnClickListener {
             saveAction()
@@ -63,8 +71,9 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         val titleStr = title.text.toString()
         val descStr = desc.text.toString()
         val dueDate = dateTimeViewModel.selectedDateTime.value!!
+        val cat = category.selectedItem as String
 
-        val todo = Todo(title = titleStr, description = descStr, dueDate = dueDate)
+        val todo = Todo(title = titleStr, description = descStr, dueDate = dueDate, category = cat)
         todoViewModel.addTodo(todo)
 
         title.setText("")

@@ -1,8 +1,10 @@
 package koslin.jan.todo.dialog
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -24,6 +26,7 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private lateinit var dialogHeader: TextView
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
+    private lateinit var category: Spinner
     private lateinit var todo: Todo
 
     private val dateTimeViewModel: DateTimeViewModel by activityViewModels()
@@ -52,10 +55,21 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         dialogHeader = view.findViewById(R.id.dialogHeader)
         title = view.findViewById(R.id.title)
         desc = view.findViewById(R.id.desc)
+        category = view.findViewById(R.id.categorySpinner)
 
         dialogHeader.text = requireContext().getString(R.string.update_todo)
         title.setText(todo.title)
         desc.setText(todo.description)
+
+        val categoriesArray = resources.getStringArray(R.array.todo_categories_entries)
+        Log.d("TEST", categoriesArray.toString())
+        val position = categoriesArray.indexOf(todo.category)
+        Log.d("TEST", position.toString())
+        if (position != -1) {
+            category.setSelection(position)
+        } else {
+            // Handle the case where the selected item is not found in the array
+        }
 
         saveButton.setOnClickListener {
             saveAction()
@@ -94,9 +108,10 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         val titleStr = title.text.toString()
         val descStr = desc.text.toString()
         val dueDate = dateTimeViewModel.selectedDateTime.value!!
+        val cat = category.selectedItem as String
 
         // Create a copy of the existing todo object with updated values
-        val updatedTodo = todo.copy(title = titleStr, description = descStr, dueDate = dueDate)
+        val updatedTodo = todo.copy(title = titleStr, description = descStr, dueDate = dueDate, category = cat)
         todoViewModel.updateTodo(updatedTodo)
 
         (parentFragment as TodoUpdateListener).onTodoUpdated(updatedTodo)
