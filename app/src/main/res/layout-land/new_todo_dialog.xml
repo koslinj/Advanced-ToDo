@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <LinearLayout
     android:layout_width="wrap_content"
@@ -52,13 +53,29 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Spinner
-        android:id="@+id/categorySpinner"
+    <LinearLayout
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:paddingVertical="8dp"
-        android:entries="@array/todo_categories_entries"
-        android:entryValues="@array/todo_categories_values" />
+        android:orientation="horizontal">
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:paddingVertical="8dp"
+            android:entries="@array/todo_categories_entries"
+            android:entryValues="@array/todo_categories_values" />
+        <Button
+            android:id="@+id/attachmentButton"
+            style="?attr/materialIconButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Attach File"
+            android:padding="8dp"
+            android:layout_marginLeft="12dp"
+            app:icon="@drawable/attach_file_icon"
+            app:iconSize="30dp" />
+    </LinearLayout>
 </LinearLayout>
 
 
