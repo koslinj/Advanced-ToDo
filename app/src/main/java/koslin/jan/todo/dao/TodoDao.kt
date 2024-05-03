@@ -6,10 +6,17 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 
 @Dao
 interface TodoDao {
+    @Insert
+    suspend fun insertAttachment(attachment: Attachment): Long
+
+    @Query("SELECT * FROM attachments WHERE todoId = :todoId")
+    fun getAttachmentsForTodo(todoId: Long): List<Attachment>
+
     @Insert
     suspend fun insert(todo: Todo): Long
 
