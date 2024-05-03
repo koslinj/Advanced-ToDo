@@ -1,7 +1,9 @@
 package koslin.jan.todo
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.activityViewModels
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import koslin.jan.todo.config.Keys
@@ -17,6 +19,14 @@ class PreferencesFragment : PreferenceFragmentCompat() {
             ?.setOnPreferenceChangeListener { _, newValue ->
                 newValue as Boolean
                 todoViewModel.showActiveOnly(newValue)
+                true
+            }
+
+        findPreference<MultiSelectListPreference>(Keys.CATEGORIES_KEY)
+            ?.setOnPreferenceChangeListener { pref, newValue ->
+                val selectedCategories = newValue as HashSet<String>
+                val categoriesArray = selectedCategories.toTypedArray()
+                todoViewModel.fetchTodosByCategories(categoriesArray)
                 true
             }
 

@@ -115,7 +115,12 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
                 todoList.postValue(todoDao.getAllTodos())
             }
         }
+    }
 
+    fun fetchTodosByCategories(cats: Array<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoList.postValue(todoDao.getTodosByCategories(cats))
+        }
     }
 
     private fun cancelNotificationAlarm(todo: Todo) {
