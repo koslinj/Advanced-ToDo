@@ -17,6 +17,7 @@
             app:summary="Select categories for todo items"
             app:entries="@array/todo_categories_entries"
             app:entryValues="@array/todo_categories_values"
+            app:defaultValue="@array/todo_categories_values"
             app:dialogTitle="Select Todo Categories"/>
     </PreferenceCategory>
 

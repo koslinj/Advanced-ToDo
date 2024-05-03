@@ -24,7 +24,7 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
     var todoList: MutableLiveData<List<Todo>> = MutableLiveData()
     private val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(application)
     private var showActiveTodos = defaultPreferences.getBoolean(Keys.VISIBILITY_KEY, false)
-    private var categoriesToShow = defaultPreferences.getStringSet(Keys.CATEGORIES_KEY, setOf())
+    private var categoriesToShow = defaultPreferences.getStringSet(Keys.CATEGORIES_KEY, setOf("work", "family", "sport"))
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
