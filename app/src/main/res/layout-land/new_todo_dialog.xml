@@ -57,8 +57,7 @@
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:paddingVertical="8dp"
-        android:entries="@array/todo_categories_entries"
-        android:entryValues="@array/todo_categories_values"/>
+        android:entries="@array/todo_categories_entries" />
 </LinearLayout>
 
 

@@ -60,8 +60,7 @@
         android:paddingVertical="8dp"
         android:layout_marginBottom="6dp"
         android:layout_marginHorizontal="20dp"
-        android:entries="@array/todo_categories_entries"
-        android:entryValues="@array/todo_categories_values"/>
+        android:entries="@array/todo_categories_entries" />
 
 
     <com.google.android.material.button.MaterialButton
