@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">ToDo</string>
     <string name="new_todo">New ToDo</string>
+    <string name="update_todo">Update ToDo</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="save">Save</string>
