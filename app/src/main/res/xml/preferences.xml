@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         app:allowDividerAbove="true"
@@ -9,6 +10,14 @@
             app:key="visibility"
             app:title="@string/activeTodosSwitch"
             app:icon="@drawable/visibility_icon"/>
+        <MultiSelectListPreference
+            app:icon="@drawable/manage_search_icon"
+            app:key="categories"
+            app:title="Todo Categories"
+            app:summary="Select categories for todo items"
+            app:entries="@array/todo_categories_entries"
+            app:entryValues="@array/todo_categories_values"
+            app:dialogTitle="Select Todo Categories"/>
     </PreferenceCategory>
 
     <PreferenceCategory
