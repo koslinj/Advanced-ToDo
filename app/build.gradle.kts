@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+
     implementation("androidx.preference:preference-ktx:1.2.0")
 
     implementation("com.google.code.gson:gson:2.10")
