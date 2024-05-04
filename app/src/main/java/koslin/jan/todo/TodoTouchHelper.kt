@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import koslin.jan.todo.adapter.TodoAdapter
 
 
 class TodoTouchHelper(private val context: Context, adapter: TodoAdapter) :

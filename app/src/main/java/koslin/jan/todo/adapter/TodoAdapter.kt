@@ -1,4 +1,4 @@
-package koslin.jan.todo
+package koslin.jan.todo.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,11 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import koslin.jan.todo.R
 import koslin.jan.todo.entity.Todo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 

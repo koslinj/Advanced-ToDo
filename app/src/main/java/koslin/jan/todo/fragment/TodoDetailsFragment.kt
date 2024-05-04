@@ -1,6 +1,5 @@
 package koslin.jan.todo.fragment
 
-import android.content.ContentResolver
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
 import koslin.jan.todo.App
-import koslin.jan.todo.ImageAdapter
+import koslin.jan.todo.adapter.ImageAdapter
 import koslin.jan.todo.R
 import koslin.jan.todo.dialog.UpdateTodoDialog
 import koslin.jan.todo.entity.Attachment

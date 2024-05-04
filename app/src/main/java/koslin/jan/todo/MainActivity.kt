@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import koslin.jan.todo.adapter.TodoAdapter
 import koslin.jan.todo.dialog.ModalBottomSheet
 import koslin.jan.todo.dialog.NewTodoDialog
 import koslin.jan.todo.entity.Todo
