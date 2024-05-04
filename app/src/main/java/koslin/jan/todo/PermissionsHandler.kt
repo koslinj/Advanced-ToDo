@@ -19,16 +19,17 @@ class PermissionsHandler(private val activity: FragmentActivity) {
 
     private val alarmManager: AlarmManager = activity.application.getSystemService<AlarmManager>()!!
     private val requestPermissionLauncher =
-        activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (!isGranted) {
-                Log.d("POST_NOTIFICATION_PERMISSION", "USER DENIED PERMISSION")
+        activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val allGranted = permissions.all { it.value }
+            if (!allGranted) {
+                Log.d("PERMISSION_REQUEST", "Some permissions were denied")
             } else {
-                Log.d("POST_NOTIFICATION_PERMISSION", "USER GRANTED PERMISSION")
+                Log.d("PERMISSION_REQUEST", "All permissions were granted")
             }
         }
 
-    fun handleNotificationAndExactAlarm() {
-        requestNotificationPermission()
+    fun handleAllPermissions() {
+        requestClassicPermissions()
 
         if (alarmManager.canScheduleExactAlarms()) {
             // Set exact alarms.
@@ -38,14 +39,26 @@ class PermissionsHandler(private val activity: FragmentActivity) {
         }
     }
 
-    private fun requestNotificationPermission() {
-        val permission = Manifest.permission.POST_NOTIFICATIONS
-        when {
-            checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED -> {
-                requestPermissionLauncher.launch(permission)
+    private fun requestClassicPermissions() {
+        val permissions = arrayOf(
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.POST_NOTIFICATIONS
+        )
+
+        val permissionsToRequest = mutableListOf<String>()
+
+        for (permission in permissions) {
+            if (checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(permission)
             }
         }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            requestPermissionLauncher.launch(permissionsToRequest.toTypedArray())
+        }
     }
+
 
     private fun requestScheduleExactAlarmPermission() {
         val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {

@@ -1,7 +1,6 @@
 package koslin.jan.todo
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -84,8 +83,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         permissionsHandler = PermissionsHandler(this)
-        permissionsHandler.handleNotificationAndExactAlarm()
-
+        permissionsHandler.handleAllPermissions()
     }
 
     private fun showBottomSheet() {
