@@ -1,24 +1,35 @@
 package koslin.jan.todo.fragment
 
+import android.content.ContentResolver
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.gson.Gson
+import koslin.jan.todo.App
+import koslin.jan.todo.ImageAdapter
 import koslin.jan.todo.R
 import koslin.jan.todo.dialog.UpdateTodoDialog
+import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.viewmodel.TodoViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodoDialog.TodoUpdateListener {
+class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
+    UpdateTodoDialog.TodoUpdateListener {
     private lateinit var titleTextView: TextView
     private lateinit var categoryTextView: TextView
     private lateinit var descriptionTextView: TextView
@@ -27,7 +38,10 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodo
     private lateinit var topAppBar: MaterialToolbar
     private lateinit var notificationsMenuItem: MenuItem
     private lateinit var todo: Todo
+    private lateinit var attachments: List<Attachment>
     private val todoViewModel: TodoViewModel by activityViewModels()
+    private val todoDao = App.database.todoDao()
+    private val imageIds = mutableListOf<Long>()
 
     companion object {
         private const val ARG_TODO_JSON = "todo_json"
@@ -45,6 +59,21 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodo
         super.onViewCreated(view, savedInstanceState)
 
         todo = Gson().fromJson(requireArguments().getString(ARG_TODO_JSON), Todo::class.java)
+        lifecycleScope.launch(Dispatchers.IO) {
+            attachments = todoDao.getAttachmentsForTodo(todo.id)
+            Log.d("ATTACH", attachments.toString())
+            todo.attachments = attachments
+
+            withContext(Dispatchers.Main) {
+                loadImagesIds(attachments)
+                // Set up RecyclerView
+                val recyclerView: RecyclerView = view.findViewById(R.id.filesRecyclerView)
+                val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                val adapter = ImageAdapter(requireContext(), imageIds)
+                recyclerView.layoutManager = layoutManager
+                recyclerView.adapter = adapter
+            }
+        }
 
         view.setOnClickListener { } //empty on click to avoid pressing things behind
         topAppBar = view.findViewById(R.id.topAppBar)
@@ -119,6 +148,16 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details), UpdateTodo
         notificationsMenuItem.setIcon(icon)
         notificationsMenuItem.isChecked = checked
     }
+
+    fun loadImagesIds(attachments: List<Attachment>) {
+        for (att in attachments){
+            val attUri = Uri.parse(att.uri)
+            val attFinalStr = attUri.lastPathSegment.toString().substring(6)
+            val finalId = attFinalStr.toLong()
+            imageIds.add(finalId)
+        }
+    }
+
 
     private fun displayTodoDetails() {
 
