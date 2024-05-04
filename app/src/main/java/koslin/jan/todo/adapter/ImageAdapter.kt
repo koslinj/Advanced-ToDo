@@ -26,7 +26,7 @@ class ImageAdapter(private val context: Context, private val imageIds: List<Long
         Glide.with(holder.imageView)
             .load(mediaUri)
             .fitCenter()
-            .placeholder(R.drawable.time_icon) // Placeholder image while loading
+            .placeholder(R.drawable.spinner_icon) // Placeholder image while loading
             .error(R.drawable.delete_icon) // Error image if loading fails
             .into(holder.imageView)
     }
