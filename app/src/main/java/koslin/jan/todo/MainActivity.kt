@@ -1,9 +1,11 @@
 package koslin.jan.todo
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +17,9 @@ import koslin.jan.todo.dialog.NewTodoDialog
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.fragment.TodoDetailsFragment
 import koslin.jan.todo.viewmodel.TodoViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -67,7 +72,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         todoViewModel.todoList.observe(this) { todos ->
-            todoAdapter.updateData(todos)
+            lifecycleScope.launch(Dispatchers.IO) {
+                for (todo in todos){
+                    val attachments = App.database.todoDao().getAttachmentsForTodo(todo.id)
+                    todo.attachments = attachments
+                }
+                withContext(Dispatchers.Main){
+                    todoAdapter.updateData(todos)
+                }
+            }
         }
 
         permissionsHandler = PermissionsHandler(this)

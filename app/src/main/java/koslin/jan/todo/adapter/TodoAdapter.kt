@@ -1,9 +1,11 @@
 package koslin.jan.todo.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import koslin.jan.todo.R
@@ -22,6 +24,7 @@ class TodoAdapter(
         val todoTextView: TextView = itemView.findViewById(R.id.todoTextView)
         val todoDateTextView: TextView = itemView.findViewById(R.id.todoDateTextView)
         val completeButton: ImageButton = itemView.findViewById(R.id.completeButton)
+        val hasAttachmentsIcon: ImageView = itemView.findViewById(R.id.hasAttachmentsIcon)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,6 +34,12 @@ class TodoAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val myTodo = todoList[position]
+
+        if(myTodo.attachments.isNotEmpty()){
+            holder.hasAttachmentsIcon.visibility = ImageView.VISIBLE
+        } else {
+            holder.hasAttachmentsIcon.visibility = ImageView.INVISIBLE
+        }
 
         if(myTodo.status === Todo.Status.ACTIVE) {
             holder.completeButton.setImageResource(R.drawable.circle_icon)

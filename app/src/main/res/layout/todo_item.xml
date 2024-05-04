@@ -17,7 +17,8 @@
         android:layout_marginEnd="12dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -36,4 +37,13 @@
             android:text="Wyprowadzić psa"
             android:textSize="22sp" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/hasAttachmentsIcon"
+        android:visibility="invisible"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="6dp"
+        android:src="@drawable/attach_file_icon" />
 </LinearLayout>
