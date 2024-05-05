@@ -17,6 +17,9 @@ interface TodoDao {
     @Query("SELECT * FROM attachments WHERE todoId = :todoId")
     fun getAttachmentsForTodo(todoId: Long): List<Attachment>
 
+    @Query("DELETE FROM attachments WHERE todoId = :todoId")
+    suspend fun deleteAttachmentsByTodoId(todoId: Long)
+
     @Insert
     suspend fun insert(todo: Todo): Long
 
