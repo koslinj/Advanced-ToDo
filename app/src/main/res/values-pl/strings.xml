@@ -18,4 +18,12 @@
     <string name="display">Wyświetlanie</string>
     <string name="notifToggle">Włącz/Wyłącz powiadomienia</string>
     <string name="category">Kategoria</string>
+    <string name="search_by_title">Wyszukaj po tytule...</string>
+    <string name="permission_request_title">Prośba o uprawnienie</string>
+    <string name="permission_request_message">Aplikacja potrzebuje uprawnienia do planowania dokładnych alarmów w celu zapewnienia dokładnych powiadomień.</string>
+    <string name="grant_permission">Przyznaj uprawnienie</string>
+    <string name="alarm_reminder_working">Alarmy i przypomnienia działają</string>
+    <string name="todo_categories_title">Kategorie zadań</string>
+    <string name="todo_categories_summary">Wybierz kategorie zadań do wyświetlenia</string>
+    <string name="created">Utworzono:</string>
 </resources>

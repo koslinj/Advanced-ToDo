@@ -18,4 +18,12 @@
     <string name="display">Display</string>
     <string name="notifToggle">turn on/off notifications</string>
     <string name="category">Category</string>
+    <string name="search_by_title">Search by title...</string>
+    <string name="permission_request_title">Permission Request</string>
+    <string name="permission_request_message">The app needs permission to schedule exact alarms for accurate notifications.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="alarm_reminder_working">Alarms and reminders are working</string>
+    <string name="todo_categories_title">Todo Categories</string>
+    <string name="todo_categories_summary">Select categories for todo items</string>
+    <string name="created">Created:</string>
 </resources>
