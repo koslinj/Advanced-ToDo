@@ -33,8 +33,8 @@ class Notification : BroadcastReceiver() {
 
         // Create a notification
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("Todo Reminder")
-            .setContentText("Reminder for: ${todo.title}")
+            .setContentTitle(context.getString(R.string.todo_reminder_title))
+            .setContentText("${context.getString(R.string.todo_reminder_content)} ${todo.title}")
             .setSmallIcon(R.drawable.time_icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -66,8 +66,8 @@ class Notification : BroadcastReceiver() {
     }
 
     private fun createNotificationChannel(context: Context) {
-        val name = "Todo Notification"
-        val descriptionText = "Reminder for Todo items"
+        val name = context.getString(R.string.todo_notification_channel_name)
+        val descriptionText = context.getString(R.string.todo_notification_channel_description)
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText

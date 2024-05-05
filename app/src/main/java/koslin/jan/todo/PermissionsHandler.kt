@@ -33,7 +33,8 @@ class PermissionsHandler(private val activity: FragmentActivity) {
 
         if (alarmManager.canScheduleExactAlarms()) {
             // Set exact alarms.
-            Toast.makeText(activity, activity.getString(R.string.alarm_reminder_working), Toast.LENGTH_SHORT).show()
+            Log.d("PERMISSION_REQUEST", "Can schedule exact alarms")
+            // Toast.makeText(activity, activity.getString(R.string.alarm_reminder_working), Toast.LENGTH_SHORT).show()
         } else {
             showExplanationForExactAlarmPermission()
         }
