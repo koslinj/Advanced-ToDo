@@ -35,6 +35,14 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
         }
     }
 
+    fun searchTodosByTitle(titleQuery: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val todos = todoDao.searchTodosByTitle("%$titleQuery%")
+            todoList.postValue(todos)
+        }
+    }
+
+
     fun deleteTodo(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
             todoDao.delete(todo)
@@ -155,6 +163,13 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             refreshVisibleTodos()
         }
     }
+
+    fun publicRefresh() {
+        viewModelScope.launch(Dispatchers.IO){
+            refreshVisibleTodos()
+        }
+    }
+
 
     private suspend fun refreshVisibleTodos() {
         if (showActiveTodos) {

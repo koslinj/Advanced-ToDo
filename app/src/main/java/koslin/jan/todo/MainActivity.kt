@@ -1,7 +1,10 @@
 package koslin.jan.todo
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var newTodoButton: FloatingActionButton
     private lateinit var settingsButton: Button
+    private lateinit var searchEditText: EditText
     private lateinit var todoAdapter: TodoAdapter
     private lateinit var todoViewModel: TodoViewModel
     private lateinit var itemTouchHelper: ItemTouchHelper
@@ -47,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         newTodoButton = findViewById(R.id.newTodoButton)
         settingsButton = findViewById(R.id.settingsButton)
+        searchEditText = findViewById(R.id.searchEditText)
         recyclerView = findViewById(R.id.mainRecyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -81,6 +86,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if(s.toString().isNotEmpty()) {
+                    // Perform search operation
+                    todoViewModel.searchTodosByTitle(s.toString())
+                } else {
+                    todoViewModel.publicRefresh()
+                }
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
 
         permissionsHandler = PermissionsHandler(this)
         permissionsHandler.handleAllPermissions()
