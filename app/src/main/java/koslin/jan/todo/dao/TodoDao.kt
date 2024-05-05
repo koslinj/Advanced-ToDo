@@ -11,6 +11,9 @@ import koslin.jan.todo.entity.Todo
 
 @Dao
 interface TodoDao {
+    @Query("SELECT * FROM todos WHERE title LIKE :titleQuery")
+    suspend fun searchTodosByTitle(titleQuery: String): List<Todo>
+
     @Insert
     suspend fun insertAttachment(attachment: Attachment): Long
 
