@@ -38,6 +38,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
     private lateinit var notificationsMenuItem: MenuItem
     private lateinit var todo: Todo
     private lateinit var attachments: List<Attachment>
+    private lateinit var imageAdapter: ImageAdapter
     private val todoViewModel: TodoViewModel by activityViewModels()
     private val todoDao = App.database.todoDao()
     private val imageIds = mutableListOf<Long>()
@@ -68,9 +69,9 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
                 // Set up RecyclerView
                 val recyclerView: RecyclerView = view.findViewById(R.id.filesRecyclerView)
                 val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                val adapter = ImageAdapter(requireContext(), imageIds)
+                imageAdapter = ImageAdapter(requireContext(), imageIds)
                 recyclerView.layoutManager = layoutManager
-                recyclerView.adapter = adapter
+                recyclerView.adapter = imageAdapter
             }
         }
 
@@ -149,6 +150,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
     }
 
     fun loadImagesIds(attachments: List<Attachment>) {
+        imageIds.clear()
         for (att in attachments){
             val attUri = Uri.parse(att.uri)
             val attFinalStr = attUri.lastPathSegment.toString().substring(6)
@@ -182,8 +184,12 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
         createdAtTextView.text = "$dateString\n$timeString"
     }
 
-    override fun onTodoUpdated(todo: Todo) {
+    override fun onTodoUpdated(todo: Todo, atts: List<Attachment>) {
         this.todo = todo
+        attachments = atts
+        todo.attachments = attachments
+        loadImagesIds(attachments)
+        imageAdapter.updateData(imageIds)
         displayTodoDetails()
     }
 }

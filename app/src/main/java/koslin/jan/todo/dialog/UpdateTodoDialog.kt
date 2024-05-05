@@ -1,16 +1,19 @@
 package koslin.jan.todo.dialog
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import koslin.jan.todo.R
+import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.fragment.TodoDetailsFragment
 import koslin.jan.todo.viewmodel.DateTimeViewModel
@@ -23,14 +26,23 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 {
     private lateinit var saveButton: Button
     private lateinit var dateButton: Button
+    private lateinit var attachmentButton: Button
     private lateinit var dialogHeader: TextView
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
     private lateinit var category: Spinner
     private lateinit var todo: Todo
 
+    private val attachmentUris = mutableListOf<Uri>()
+
     private val dateTimeViewModel: DateTimeViewModel by activityViewModels()
     private val todoViewModel: TodoViewModel by activityViewModels()
+
+    val getContent = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
+        attachmentUris.clear()
+        attachmentUris.addAll(uris)
+        Log.d("FILES", attachmentUris.toString())
+    }
 
     companion object {
         private const val ARG_TODO_JSON = "todo_json"
@@ -56,6 +68,10 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         title = view.findViewById(R.id.title)
         desc = view.findViewById(R.id.desc)
         category = view.findViewById(R.id.categorySpinner)
+        attachmentButton = view.findViewById(R.id.attachmentButton)
+        attachmentButton.setOnClickListener {
+            getContent.launch("*/*")
+        }
 
         dialogHeader.text = requireContext().getString(R.string.update_todo)
         title.setText(todo.title)
@@ -115,17 +131,30 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         val cat = catValues[pos]
 
         val updatedTodo = todo.copy(title = titleStr, description = descStr, dueDate = dueDate, category = cat)
-        todoViewModel.updateTodo(updatedTodo)
-
-        (parentFragment as TodoUpdateListener).onTodoUpdated(updatedTodo)
+        val attachments = createAttachmentsFromUris()
+        val listener = (parentFragment as TodoUpdateListener)
+        todoViewModel.updateTodoWithAttachments(updatedTodo, attachments) { _todo, _atts ->
+            listener.onTodoUpdated(_todo, _atts)
+        }
 
         title.setText("")
         desc.setText("")
         dismiss()
     }
 
+    private fun createAttachmentsFromUris(): List<Attachment> {
+        val attachments = mutableListOf<Attachment>()
+        for (uri in attachmentUris) {
+            // Assuming you have a method to get the URI string
+            val uriString = uri.toString()
+            val attachment = Attachment(todoId = 0, uri = uriString) // Assuming todoId needs to be set later
+            attachments.add(attachment)
+        }
+        return attachments
+    }
+
     interface TodoUpdateListener {
-        fun onTodoUpdated(todo: Todo)
+        fun onTodoUpdated(todo: Todo, attachments: List<Attachment>)
     }
 
 }

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import koslin.jan.todo.R
 
-class ImageAdapter(private val context: Context, private val imageIds: List<Long>) :
+class ImageAdapter(private val context: Context, private var imageIds: List<Long>) :
     RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -33,6 +33,11 @@ class ImageAdapter(private val context: Context, private val imageIds: List<Long
 
     override fun getItemCount(): Int {
         return imageIds.size
+    }
+
+    fun updateData(newData: List<Long>) {
+        imageIds = newData
+        notifyDataSetChanged()
     }
 
     class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
