@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:translationZ="-30dp"
         android:id="@+id/activityAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorSurfaceContainerHigh"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
+            app:layout_scrollFlags="scroll">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/topConstraintLayout"
