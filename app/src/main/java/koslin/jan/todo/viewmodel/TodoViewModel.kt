@@ -19,6 +19,7 @@ import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TodoViewModel(private val application: Application) : AndroidViewModel(application) {
     private val todoDao = App.database.todoDao()
@@ -54,6 +55,35 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
             refreshVisibleTodos()
 
             scheduleReminder(insertedTodo)
+        }
+    }
+
+    fun updateTodoWithAttachments(
+        todo: Todo,
+        attachments: List<Attachment>,
+        callback: (
+            todo: Todo,
+            attachments: List<Attachment>
+        ) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            todoDao.update(todo)
+
+            todoDao.deleteAttachmentsByTodoId(todo.id)
+            attachments.forEach { attachment ->
+                attachment.todoId = todo.id
+                todoDao.insertAttachment(attachment)
+            }
+            val updatedTodo = todoDao.getTodoById(todo.id)!!
+
+            refreshVisibleTodos()
+
+            scheduleReminder(updatedTodo)
+
+            withContext(Dispatchers.Main) {
+                // Notify the callback with the updated data
+                callback(updatedTodo, attachments)
+            }
         }
     }
 
