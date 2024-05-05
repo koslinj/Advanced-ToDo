@@ -33,7 +33,7 @@ class PermissionsHandler(private val activity: FragmentActivity) {
 
         if (alarmManager.canScheduleExactAlarms()) {
             // Set exact alarms.
-            Toast.makeText(activity, "ALARMY I PRZYPOMNIENIA DZIAŁAJĄ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.alarm_reminder_working), Toast.LENGTH_SHORT).show()
         } else {
             showExplanationForExactAlarmPermission()
         }
@@ -68,23 +68,19 @@ class PermissionsHandler(private val activity: FragmentActivity) {
             activity.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             // Handle case where the device doesn't support ACTION_REQUEST_SCHEDULE_EXACT_ALARM action
-            Toast.makeText(
-                activity,
-                "Twoje urządzenie nie obsługuje tej funkcji.",
-                Toast.LENGTH_SHORT
-            ).show()
+            Log.d("PERMISSION_REQUEST", "Your device does not support this")
         }
     }
 
     private fun showExplanationForExactAlarmPermission() {
         AlertDialog.Builder(activity)
-            .setTitle("Prośba o uprawnienie")
-            .setMessage("Aplikacja potrzebuje uprawnienia do planowania dokładnych alarmów w celu zapewnienia dokładnych powiadomień.")
-            .setPositiveButton("Przyznaj uprawnienie") { dialog, _ ->
+            .setTitle(activity.getString(R.string.permission_request_title))
+            .setMessage(activity.getString(R.string.permission_request_message))
+            .setPositiveButton(activity.getString(R.string.grant_permission)) { dialog, _ ->
                 requestScheduleExactAlarmPermission()
                 dialog.dismiss()
             }
-            .setNegativeButton("Anuluj") { dialog, _ ->
+            .setNegativeButton(activity.getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
