@@ -30,4 +30,5 @@
     <string name="todo_reminder_content">Przypomnienie dla:</string>
     <string name="todo_notification_channel_name">Kanał powiadomień zadań</string>
     <string name="todo_notification_channel_description">Kanał dla przypomnień o zadaniach</string>
+    <string name="select_todo_categories">Wybierz kategorie zadań</string>
 </resources>

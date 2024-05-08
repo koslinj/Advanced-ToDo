@@ -30,4 +30,5 @@
     <string name="todo_reminder_content">Reminder for:</string>
     <string name="todo_notification_channel_name">Todo Notification Channel</string>
     <string name="todo_notification_channel_description">Channel for reminders of Todo items</string>
+    <string name="select_todo_categories">Select Todo Categories</string>
 </resources>
