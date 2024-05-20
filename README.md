@@ -40,9 +40,9 @@ This Todo List Application is developed in Kotlin for Native Android, providing 
 
 ## Screenshots
 
-<img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/d2dfca95-add5-47b5-b010-fa1c9de112b2" alt="Screenshot" height="730px" />
-<img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/527819e4-0883-4457-9348-db1099a9982c" alt="Screenshot" height="730px" />
-<img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/08c6bb39-42ff-427c-8b42-77f18c52386e" alt="Screenshot" height="730px" />
+<img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/d2dfca95-add5-47b5-b010-fa1c9de112b2" alt="Screenshot" height="600px" />
+<img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/527819e4-0883-4457-9348-db1099a9982c" alt="Screenshot" height="600px" />
+<img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/08c6bb39-42ff-427c-8b42-77f18c52386e" alt="Screenshot" height="600px" />
 <img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/2e6e89da-a892-4a84-a60f-73be648248d3" alt="Screenshot" height="730px" />
 <img src="https://github.com/koslinj/Advanced-ToDo/assets/97230028/042cd2c5-e763-4ca5-b96c-f9474c1d2fde" alt="Screenshot" height="730px" />
 
