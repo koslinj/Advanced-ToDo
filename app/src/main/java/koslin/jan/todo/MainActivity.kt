@@ -3,6 +3,7 @@ package koslin.jan.todo
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -41,12 +42,14 @@ class MainActivity : AppCompatActivity() {
         todoViewModel = ViewModelProvider(this).get(TodoViewModel::class.java)
 
         // Handle intent action
+        Log.d("INTENT", intent.action.toString())
         if (intent.action == ACTION_SHOW_TODO_DETAILS) {
             val todoStr = intent?.getStringExtra(Notification.EXTRA_TODO) ?: ""
             val todo = Gson().fromJson(todoStr, Todo::class.java)
             if (todo != null) {
                 showDetailsFragment(todo)
             }
+            intent.action = ""
         }
 
         newTodoButton = findViewById(R.id.newTodoButton)
@@ -111,7 +114,12 @@ class MainActivity : AppCompatActivity() {
 
 
     fun showDetailsFragment(todo: Todo) {
-        // Replace the current fragment with a new fragment displaying details of todoo
+        val oldFragment = supportFragmentManager.findFragmentByTag(TodoDetailsFragment::class.java.simpleName)
+
+        if (oldFragment != null && oldFragment is TodoDetailsFragment) {
+            return
+        }
+
         val fragment = TodoDetailsFragment.newInstance(todo)
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
@@ -120,7 +128,7 @@ class MainActivity : AppCompatActivity() {
                 androidx.appcompat.R.anim.abc_slide_in_bottom,
                 androidx.appcompat.R.anim.abc_slide_out_bottom,
             )
-            .replace(R.id.mainContainer, fragment)
+            .replace(R.id.mainContainer, fragment, TodoDetailsFragment::class.java.simpleName)
             .addToBackStack(null)
             .commit()
     }
