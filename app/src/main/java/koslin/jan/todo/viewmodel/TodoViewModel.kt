@@ -159,7 +159,6 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
     fun fetchTodosByCategories(selectedCategories: HashSet<String>) {
         viewModelScope.launch(Dispatchers.IO) {
             categoriesToShow = selectedCategories
-            Log.d("TEST", categoriesToShow.toString())
             refreshVisibleTodos()
         }
     }
@@ -212,9 +211,7 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
 
         val dueDate = insertedTodo.dueDate
         val notificationTime = dueDate - notificationInterval * 1000
-        Log.d("ALARM", "OBLICZONY")
         if (alarmManager.canScheduleExactAlarms()) {
-            Log.d("ALARM", "USTAWIONY")
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationTime, pendingIntent)
         }
     }
