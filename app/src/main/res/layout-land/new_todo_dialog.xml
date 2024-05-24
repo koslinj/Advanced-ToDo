@@ -1,103 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="horizontal"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/dialogHeader"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:text="@string/new_todo"
-        android:textSize="24sp"
-        style="@style/TextAppearance.AppCompat.Title"/>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="6dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="350dp"
-            android:layout_height="match_parent"
-            android:inputType="text"
-            android:id="@+id/title"
-            android:hint="@string/title"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:maxHeight="200dp"
-            android:inputType="textMultiLine"
-            android:maxLines="6"
-            android:id="@+id/desc"
-            android:hint="@string/description">
-
-        </com.google.android.material.textfield.TextInputEditText>
-
-    </com.google.android.material.textfield.TextInputLayout>
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:padding="10dp">
 
     <LinearLayout
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialogHeader"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:paddingVertical="8dp"
-            android:entries="@array/todo_categories_entries"
-            android:entryValues="@array/todo_categories_values" />
-        <Button
-            android:id="@+id/attachmentButton"
-            style="?attr/materialIconButtonStyle"
+            android:text="@string/new_todo"
+            android:textSize="24sp" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Attach File"
-            android:padding="8dp"
-            android:layout_marginLeft="12dp"
-            app:icon="@drawable/attach_file_icon"
-            app:iconSize="30dp" />
+            android:layout_marginVertical="6dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/title"
+                android:layout_width="300dp"
+                android:layout_height="match_parent"
+                android:hint="@string/title"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/desc"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/description"
+                android:inputType="textMultiLine"
+                android:maxHeight="200dp"
+                android:maxLines="6">
+
+            </com.google.android.material.textfield.TextInputEditText>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/todo_categories_entries"
+                android:entryValues="@array/todo_categories_values"
+                android:paddingVertical="8dp" />
+
+            <Button
+                android:id="@+id/attachmentButton"
+                style="?attr/materialIconButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:contentDescription="Attach File"
+                android:padding="8dp"
+                app:icon="@drawable/attach_file_icon"
+                app:iconSize="30dp" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
 
 
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical"
-    android:layout_marginLeft="10dp"
-    android:orientation="vertical">
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/dateButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="DATE"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/saveButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/save"/>
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/dateButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="DATE" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/save" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/attachmentsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:overScrollMode="never"
+            android:scrollbars="vertical" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package koslin.jan.todo.dialog
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -14,8 +15,12 @@ import android.widget.Spinner
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import koslin.jan.todo.R
+import koslin.jan.todo.adapter.TempImageAdapter
+import koslin.jan.todo.config.Keys
 import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.viewmodel.DateTimeViewModel
@@ -34,6 +39,7 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private lateinit var title: TextInputEditText
     private lateinit var desc: TextInputEditText
     private lateinit var category: Spinner
+    private lateinit var tempImageAdapter: TempImageAdapter
 
     private val attachmentFilePaths = mutableListOf<String>()
 
@@ -45,8 +51,14 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         attachmentUris.addAll(uris)
         Log.d("FILES", attachmentUris.toString())
         val filePaths = saveFilesToInternalStorage(attachmentUris)
-        attachmentFilePaths.clear()
+        //attachmentFilePaths.clear()
         attachmentFilePaths.addAll(filePaths)
+        tempImageAdapter.updateData(attachmentFilePaths)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putStringArrayList(Keys.FILE_PATHS_KEY, ArrayList(attachmentFilePaths))
     }
 
     private fun saveFilesToInternalStorage(uris: List<Uri>): List<String> {
@@ -90,9 +102,10 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-//        }
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+            dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, screenHeight-40)
+        }
 
         saveButton = view.findViewById(R.id.saveButton)
         dateButton = view.findViewById(R.id.dateButton)
@@ -104,10 +117,24 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
             getContent.launch(arrayOf("*/*"))
         }
 
+        // Set up RecyclerView
+        val attachmentsRecyclerView = view.findViewById<RecyclerView>(R.id.attachmentsRecyclerView)
+        attachmentsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        // Load paths saved in instance state
+        savedInstanceState?.getStringArrayList(Keys.FILE_PATHS_KEY)?.let { filePaths ->
+            attachmentFilePaths.addAll(filePaths)
+        }
+
+        // Set adapter
+        tempImageAdapter = TempImageAdapter(requireContext(), attachmentFilePaths) {
+            attachmentFilePaths.apply { removeAt(it) }
+        }
+        attachmentsRecyclerView.adapter = tempImageAdapter
+
         saveButton.setOnClickListener {
             saveAction()
         }
-
 
         // Inside your fragment
         dateTimeViewModel.selectedDateTime.observe(viewLifecycleOwner) { dateTime ->

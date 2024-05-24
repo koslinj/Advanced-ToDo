@@ -1,22 +1,30 @@
 package koslin.jan.todo.dialog
 
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import koslin.jan.todo.R
+import koslin.jan.todo.adapter.ImageAdapter
+import koslin.jan.todo.adapter.TempImageAdapter
+import koslin.jan.todo.config.Keys
 import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
-import koslin.jan.todo.fragment.TodoDetailsFragment
 import koslin.jan.todo.viewmodel.DateTimeViewModel
 import koslin.jan.todo.viewmodel.TodoViewModel
 import java.io.File
@@ -36,6 +44,7 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private lateinit var desc: TextInputEditText
     private lateinit var category: Spinner
     private lateinit var todo: Todo
+    private lateinit var tempImageAdapter: TempImageAdapter
 
     private val attachmentFilePaths = mutableListOf<String>()
 
@@ -47,8 +56,14 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         attachmentUris.addAll(uris)
         Log.d("FILES", attachmentUris.toString())
         val filePaths = saveFilesToInternalStorage(attachmentUris)
-        attachmentFilePaths.clear()
+        //attachmentFilePaths.clear()
         attachmentFilePaths.addAll(filePaths)
+        tempImageAdapter.updateData(attachmentFilePaths)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putStringArrayList(Keys.FILE_PATHS_KEY, ArrayList(attachmentFilePaths))
     }
 
     private fun saveFilesToInternalStorage(uris: List<Uri>): List<String> {
@@ -105,6 +120,10 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //dialog?.window?.setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT)
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+            dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, screenHeight-40)
+        }
 
         todo = Gson().fromJson(requireArguments().getString(ARG_TODO_JSON), Todo::class.java)
 
@@ -118,6 +137,27 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         attachmentButton.setOnClickListener {
             getContent.launch(arrayOf("*/*"))
         }
+
+        // Set up RecyclerView
+        val attachmentsRecyclerView = view.findViewById<RecyclerView>(R.id.attachmentsRecyclerView)
+        attachmentsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        // Load existing attachments
+        attachmentFilePaths.clear()
+        val existingAttachments = todo.attachments.map { it.uri } // Assuming `todo.attachments` contains the attachments
+        attachmentFilePaths.addAll(existingAttachments)
+
+        // Load paths saved in instance state
+        savedInstanceState?.getStringArrayList(Keys.FILE_PATHS_KEY)?.let { filePaths ->
+            val newFilePaths = filePaths.filterNot { path -> existingAttachments.contains(path) }
+            attachmentFilePaths.addAll(newFilePaths)
+        }
+
+        // Set adapter
+        tempImageAdapter = TempImageAdapter(requireContext(), attachmentFilePaths) {
+            attachmentFilePaths.apply { removeAt(it) }
+        }
+        attachmentsRecyclerView.adapter = tempImageAdapter
 
         dialogHeader.text = requireContext().getString(R.string.update_todo)
         title.setText(todo.title)
