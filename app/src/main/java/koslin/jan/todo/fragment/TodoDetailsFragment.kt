@@ -41,7 +41,7 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
     private lateinit var imageAdapter: ImageAdapter
     private val todoViewModel: TodoViewModel by activityViewModels()
     private val todoDao = App.database.todoDao()
-    private val imageIds = mutableListOf<Long>()
+    private val imagePaths = mutableListOf<String>()
 
     companion object {
         private const val ARG_TODO_JSON = "todo_json"
@@ -65,11 +65,11 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
             todo.attachments = attachments
 
             withContext(Dispatchers.Main) {
-                loadImagesIds(attachments)
+                loadImagePaths(attachments)
                 // Set up RecyclerView
                 val recyclerView: RecyclerView = view.findViewById(R.id.filesRecyclerView)
                 val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                imageAdapter = ImageAdapter(requireContext(), imageIds)
+                imageAdapter = ImageAdapter(requireContext(), imagePaths)
                 recyclerView.layoutManager = layoutManager
                 recyclerView.adapter = imageAdapter
             }
@@ -149,13 +149,10 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
         notificationsMenuItem.isChecked = checked
     }
 
-    fun loadImagesIds(attachments: List<Attachment>) {
-        imageIds.clear()
+    fun loadImagePaths(attachments: List<Attachment>) {
+        imagePaths.clear()
         for (att in attachments){
-            val attUri = Uri.parse(att.uri)
-            val attFinalStr = attUri.lastPathSegment.toString().substring(6)
-            val finalId = attFinalStr.toLong()
-            imageIds.add(finalId)
+            imagePaths.add(att.uri)
         }
     }
 
@@ -188,8 +185,8 @@ class TodoDetailsFragment : Fragment(R.layout.fragment_todo_details),
         this.todo = todo
         attachments = atts
         todo.attachments = attachments
-        loadImagesIds(attachments)
-        imageAdapter.updateData(imageIds)
+        loadImagePaths(attachments)
+        imageAdapter.updateData(imagePaths)
         displayTodoDetails()
     }
 }

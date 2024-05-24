@@ -10,8 +10,9 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import koslin.jan.todo.R
+import java.io.File
 
-class ImageAdapter(private val context: Context, private var imageIds: List<Long>) :
+class ImageAdapter(private val context: Context, private var imagePaths: List<String>) :
     RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -20,11 +21,11 @@ class ImageAdapter(private val context: Context, private var imageIds: List<Long
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val imageId = imageIds[position]
-        val mediaUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
+        val filePath = imagePaths[position]
 
         Glide.with(holder.imageView)
-            .load(mediaUri)
+            //.load(mediaUri)
+            .load(File(filePath))
             .fitCenter()
             .placeholder(R.drawable.spinner_icon) // Placeholder image while loading
             .error(R.drawable.delete_icon) // Error image if loading fails
@@ -32,11 +33,11 @@ class ImageAdapter(private val context: Context, private var imageIds: List<Long
     }
 
     override fun getItemCount(): Int {
-        return imageIds.size
+        return imagePaths.size
     }
 
-    fun updateData(newData: List<Long>) {
-        imageIds = newData
+    fun updateData(newData: List<String>) {
+        imagePaths = newData
         notifyDataSetChanged()
     }
 
