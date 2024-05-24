@@ -20,6 +20,7 @@ import koslin.jan.todo.entity.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class TodoViewModel(private val application: Application) : AndroidViewModel(application) {
     private val todoDao = App.database.todoDao()
@@ -45,6 +46,16 @@ class TodoViewModel(private val application: Application) : AndroidViewModel(app
 
     fun deleteTodo(todo: Todo) {
         viewModelScope.launch(Dispatchers.IO) {
+            // Retrieve attachments for the Todo
+            val attachments = todoDao.getAttachmentsForTodo(todo.id)
+
+            // Delete the files from internal storage
+            attachments.forEach { attachment ->
+                val file = File(attachment.uri)
+                if (file.exists()) {
+                    file.delete()
+                }
+            }
             todoDao.delete(todo)
 
             refreshVisibleTodos()
