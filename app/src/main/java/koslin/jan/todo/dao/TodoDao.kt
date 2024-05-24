@@ -17,6 +17,9 @@ interface TodoDao {
     @Insert
     suspend fun insertAttachment(attachment: Attachment): Long
 
+    @Query("SELECT * FROM attachments")
+    fun getAllAttachments(): List<Attachment>
+
     @Query("SELECT * FROM attachments WHERE todoId = :todoId")
     fun getAttachmentsForTodo(todoId: Long): List<Attachment>
 

@@ -1,5 +1,6 @@
 package koslin.jan.todo.dialog
 
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
@@ -15,10 +16,12 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
+import koslin.jan.todo.App
 import koslin.jan.todo.R
 import koslin.jan.todo.adapter.ImageAdapter
 import koslin.jan.todo.adapter.TempImageAdapter
@@ -27,6 +30,9 @@ import koslin.jan.todo.entity.Attachment
 import koslin.jan.todo.entity.Todo
 import koslin.jan.todo.viewmodel.DateTimeViewModel
 import koslin.jan.todo.viewmodel.TodoViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -34,8 +40,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
-{
+class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog) {
     private lateinit var saveButton: Button
     private lateinit var dateButton: Button
     private lateinit var attachmentButton: Button
@@ -47,23 +52,27 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private lateinit var tempImageAdapter: TempImageAdapter
 
     private val attachmentFilePaths = mutableListOf<String>()
+    private val toRemovePaths = mutableListOf<String>()
 
+    private val todoDao = App.database.todoDao()
     private val dateTimeViewModel: DateTimeViewModel by activityViewModels()
     private val todoViewModel: TodoViewModel by activityViewModels()
 
-    private val getContent = registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
-        val attachmentUris = mutableListOf<Uri>()
-        attachmentUris.addAll(uris)
-        Log.d("FILES", attachmentUris.toString())
-        val filePaths = saveFilesToInternalStorage(attachmentUris)
-        //attachmentFilePaths.clear()
-        attachmentFilePaths.addAll(filePaths)
-        tempImageAdapter.updateData(attachmentFilePaths)
-    }
+    private val getContent =
+        registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris: List<Uri> ->
+            val attachmentUris = mutableListOf<Uri>()
+            attachmentUris.addAll(uris)
+            Log.d("FILES", attachmentUris.toString())
+            val filePaths = saveFilesToInternalStorage(attachmentUris)
+            //attachmentFilePaths.clear()
+            attachmentFilePaths.addAll(filePaths)
+            tempImageAdapter.updateData(attachmentFilePaths)
+        }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putStringArrayList(Keys.FILE_PATHS_KEY, ArrayList(attachmentFilePaths))
+        outState.putStringArrayList(Keys.REMOVE_PATHS_KEY, ArrayList(toRemovePaths))
     }
 
     private fun saveFilesToInternalStorage(uris: List<Uri>): List<String> {
@@ -85,8 +94,19 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         cursor?.use {
             if (it.moveToFirst()) {
                 var index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if(index == -1) index = 0
-                fileName = it.getString(index) ?: "unknown_file"
+                if (index == -1) index = 0
+                val originalFileName = it.getString(index) ?: "unknown_file"
+
+                val currentTime = System.currentTimeMillis()
+
+                fileName = originalFileName.let {
+                    val dotIndex = it.lastIndexOf('.')
+                    if (dotIndex != -1) {
+                        "${it.substring(0, dotIndex)}_$currentTime${it.substring(dotIndex)}"
+                    } else {
+                        "${it}_$currentTime"
+                    }
+                }
             }
         }
         return fileName
@@ -122,7 +142,7 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         //dialog?.window?.setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT)
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-            dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, screenHeight-40)
+            dialog?.window?.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, screenHeight - 40)
         }
 
         todo = Gson().fromJson(requireArguments().getString(ARG_TODO_JSON), Todo::class.java)
@@ -140,11 +160,13 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 
         // Set up RecyclerView
         val attachmentsRecyclerView = view.findViewById<RecyclerView>(R.id.attachmentsRecyclerView)
-        attachmentsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        attachmentsRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         // Load existing attachments
         attachmentFilePaths.clear()
-        val existingAttachments = todo.attachments.map { it.uri } // Assuming `todo.attachments` contains the attachments
+        val existingAttachments =
+            todo.attachments.map { it.uri } // Assuming `todo.attachments` contains the attachments
         attachmentFilePaths.addAll(existingAttachments)
 
         // Load paths saved in instance state
@@ -152,9 +174,14 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
             val newFilePaths = filePaths.filterNot { path -> existingAttachments.contains(path) }
             attachmentFilePaths.addAll(newFilePaths)
         }
+        savedInstanceState?.getStringArrayList(Keys.REMOVE_PATHS_KEY)?.let { filePaths ->
+            toRemovePaths.addAll(filePaths)
+        }
+        attachmentFilePaths.removeAll { it in toRemovePaths }
 
         // Set adapter
         tempImageAdapter = TempImageAdapter(requireContext(), attachmentFilePaths) {
+            toRemovePaths.add(attachmentFilePaths[it])
             attachmentFilePaths.apply { removeAt(it) }
         }
         attachmentsRecyclerView.adapter = tempImageAdapter
@@ -205,8 +232,25 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         }
     }
 
-    private fun saveAction()
-    {
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        Log.d("AAA", attachmentFilePaths.toString())
+        lifecycleScope.launch(Dispatchers.IO) {
+            var savedAtts = todoDao.getAllAttachments()
+            var savedPaths = savedAtts.map { it.uri }
+            for (p in attachmentFilePaths) {
+                if (!savedPaths.contains(p)) {
+                    val file = File(p)
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+            }
+            toRemovePaths.clear()
+        }
+    }
+
+    private fun saveAction() {
         val titleStr = title.text.toString()
         val descStr = desc.text.toString()
         val dueDate = dateTimeViewModel.selectedDateTime.value!!
@@ -216,11 +260,19 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         val pos = catEntries.indexOf(category.selectedItem)
         val cat = catValues[pos]
 
-        val updatedTodo = todo.copy(title = titleStr, description = descStr, dueDate = dueDate, category = cat)
+        val updatedTodo =
+            todo.copy(title = titleStr, description = descStr, dueDate = dueDate, category = cat)
         val attachments = createAttachmentsFromPaths()
         val listener = (parentFragment as TodoUpdateListener)
         todoViewModel.updateTodoWithAttachments(updatedTodo, attachments) { _todo, _atts ->
             listener.onTodoUpdated(_todo, _atts)
+        }
+
+        for (path in toRemovePaths) {
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            }
         }
 
         title.setText("")
@@ -231,7 +283,8 @@ class UpdateTodoDialog : DialogFragment(R.layout.new_todo_dialog)
     private fun createAttachmentsFromPaths(): List<Attachment> {
         val attachments = mutableListOf<Attachment>()
         for (path in attachmentFilePaths) {
-            val attachment = Attachment(todoId = 0, uri = path) // Assuming todoId needs to be set later
+            val attachment =
+                Attachment(todoId = 0, uri = path) // Assuming todoId needs to be set later
             attachments.add(attachment)
         }
         return attachments

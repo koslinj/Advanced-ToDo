@@ -1,6 +1,7 @@
 package koslin.jan.todo.dialog
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -81,7 +82,18 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
             if (it.moveToFirst()) {
                 var index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 if(index == -1) index = 0
-                fileName = it.getString(index) ?: "unknown_file"
+                val originalFileName = it.getString(index) ?: "unknown_file"
+
+                val currentTime = System.currentTimeMillis()
+
+                fileName = originalFileName.let {
+                    val dotIndex = it.lastIndexOf('.')
+                    if (dotIndex != -1) {
+                        "${it.substring(0, dotIndex)}_$currentTime${it.substring(dotIndex)}"
+                    } else {
+                        "${it}_$currentTime"
+                    }
+                }
             }
         }
         return fileName
@@ -128,6 +140,10 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
 
         // Set adapter
         tempImageAdapter = TempImageAdapter(requireContext(), attachmentFilePaths) {
+            val file = File(attachmentFilePaths[it])
+            if (file.exists()) {
+                file.delete()
+            }
             attachmentFilePaths.apply { removeAt(it) }
         }
         attachmentsRecyclerView.adapter = tempImageAdapter
@@ -150,6 +166,17 @@ class NewTodoDialog : DialogFragment(R.layout.new_todo_dialog)
         dateButton.setOnClickListener {
             val newFragment = DatePickerDialog()
             newFragment.show(parentFragmentManager, "datePickerTag")
+        }
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+
+        for(path in attachmentFilePaths){
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            }
         }
     }
 
